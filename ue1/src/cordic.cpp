@@ -40,6 +40,11 @@ void Cordic::calc()
       x = x_tmp;
     }
 
+    if (y < 0)
+    {
+      y = 0;
+    }
+
     oX.write(x * K);
     oY.write(y * K);
 

@@ -3,18 +3,18 @@
 
 int sc_main(int argc, char *argv[])
 {
-  // define signals
+  // Define signals
   sc_signal<bool> startCordic("startCordic");
   sc_signal<bool> cordicReady("cordicReady");
   sc_signal<phi_t> phi("phi");
   sc_signal<x_t> x("x");
   sc_signal<y_t> y("y");
 
-  // declare modules
+  // Declare modules
   Cordic cordic("CORDIC");
   CordicTb tb("tb");
 
-  // port binding
+  // Port binding
   cordic.iStart(startCordic);
   cordic.oRdy(cordicReady);
   cordic.iPhi(phi);
@@ -27,6 +27,7 @@ int sc_main(int argc, char *argv[])
   tb.iX(x);
   tb.iY(y);
 
+  // Configure trace file
   sc_trace_file *tf;
   tf = sc_create_vcd_trace_file("bin/cordic_trace");
   tf->delta_cycles(true);
