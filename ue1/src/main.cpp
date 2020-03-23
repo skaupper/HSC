@@ -1,11 +1,10 @@
 #include "cordic.h"
 #include "CordicTb.h"
 
-
 int sc_main(int argc, char *argv[])
 {
   // define signals
-  sc_signal<bool> startCordic("starCordic");
+  sc_signal<bool> startCordic("startCordic");
   sc_signal<bool> cordicReady("cordicReady");
   sc_signal<phi_t> phi("phi");
   sc_signal<x_t> x("x");
@@ -28,6 +27,14 @@ int sc_main(int argc, char *argv[])
   tb.iX(x);
   tb.iY(y);
 
+  sc_trace_file *tf;
+  tf = sc_create_vcd_trace_file("bin/cordic_trace");
+  tf->delta_cycles(true);
+  sc_trace(tf, startCordic, "startCordic");
+  sc_trace(tf, cordicReady, "cordicReady");
+  sc_trace(tf, phi, "PHI");
+  sc_trace(tf, x, "X");
+  sc_trace(tf, y, "Y");
 
   // start simulation
   sc_start(100, SC_NS);

@@ -1,9 +1,6 @@
 #ifndef CORDIC_TB_H
 #define CORDIC_TB_H
 
-#define SC_INCLUDE_FX
-#include <systemc.h>
-
 #include "cordic.h"
 
 SC_MODULE(CordicTb)
@@ -21,7 +18,7 @@ SC_MODULE(CordicTb)
 
 private:
   void doStimulate();
-  void run_test(const double phi);
+  bool run_test(const double phi);
 };
 
 #endif /* CORDIC_TB_H */
