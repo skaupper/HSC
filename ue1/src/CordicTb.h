@@ -18,7 +18,7 @@ SC_MODULE(CordicTb)
 
 private:
   void doStimulate();
-  bool run_test(const double phi);
+  bool run_test(const double phi, double *pError);
 };
 
 #endif /* CORDIC_TB_H */

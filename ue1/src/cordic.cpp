@@ -40,16 +40,11 @@ void Cordic::calc()
       x = x_tmp;
     }
 
-    if (y < 0)
-    {
-      y = 0;
-    }
-
     oX.write(x * K);
     oY.write(y * K);
 
     oRdy.write(1);
-    wait(0, SC_NS);
+    wait(SC_ZERO_TIME);
   }
 }
 
