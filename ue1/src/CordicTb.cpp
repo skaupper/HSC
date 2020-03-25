@@ -8,9 +8,10 @@ bool check_equal(const double d1, const double d2, const double epsilon)
 
 bool CordicTb::run_test(const double phi, double *pError)
 {
-  /* Theory: Max. EPSILON = 2^-ITERATIONS
-   * Reality: EPSILON = 2^-ITERATIONS + TRUNCATION ERROR (iPhi and oX, oY)
+  /* Theory: Max. EPSILON = 2^-(ITERATIONS-1)
+   * Reality: EPSILON = 2^-(ITERATIONS-1) + TRUNCATION ERROR (iPhi and oX, oY)
    */
+  // static const double EPSILON = std::pow(2, -16);
   static const double EPSILON = std::pow(2, -14);
 
   double exp_cos, exp_sin; // Variables which hold the expected values

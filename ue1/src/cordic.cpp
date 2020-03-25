@@ -10,6 +10,7 @@ Cordic::Cordic(sc_module_name name) : sc_module(name)
 
 void Cordic::calc()
 {
+  // static const int ITERATIONS = 18;
   static const int ITERATIONS = 16;
 
   while (true)
