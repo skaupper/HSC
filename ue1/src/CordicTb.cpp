@@ -11,6 +11,7 @@ bool CordicTb::run_test(const double phi, double *pError)
   /* Theory: Max. EPSILON = 2^-(ITERATIONS-1)
    * Reality: EPSILON = 2^-(ITERATIONS-1) + TRUNCATION ERROR (iPhi and oX, oY)
    */
+  // With 18 iterations, EPSILON can be increased to 2^-16
   // static const double EPSILON = std::pow(2, -16);
   static const double EPSILON = std::pow(2, -14);
 

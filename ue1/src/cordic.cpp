@@ -10,6 +10,7 @@ Cordic::Cordic(sc_module_name name) : sc_module(name)
 
 void Cordic::calc()
 {
+  // 18 iterations to use the maximum resolution of the interface (max. error = 2^-16)
   // static const int ITERATIONS = 18;
   static const int ITERATIONS = 16;
 
@@ -29,7 +30,7 @@ void Cordic::calc()
 
     for (int i = 0; i < ITERATIONS; i++)
     {
-      if (z > 0)
+      if (z >= 0)
         d = 1;
       else
         d = -1;
