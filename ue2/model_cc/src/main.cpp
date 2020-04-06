@@ -3,38 +3,56 @@
 
 int sc_main(int argc, char *argv[]) {
   // Define signals
-  sc_signal<bool> startCordic("startCordic");
-  sc_signal<bool> cordicReady("cordicReady");
-  sc_signal<phi_t> phi("phi");
-  sc_signal<x_t> x("x");
-  sc_signal<y_t> y("y");
+  sc_clock clk("clk", 10, SC_NS);
+  sc_signal<bool> nrst;
+
+  sc_signal<uint32_t> adr;
+  sc_signal<uint32_t> data;
+  sc_signal<bool> we;
+  sc_signal<bool> cyc;
+  sc_signal<bool> stb;
+  sc_signal<uint8_t> sel;
+  sc_signal<bool> ack;
 
   // Declare modules
-  Cordic cordic("CORDIC");
-  CordicTb tb("tb");
+  Master master("master");
+  Memory memory("memory");
 
   // Port binding
-  cordic.iStart(startCordic);
-  cordic.oRdy(cordicReady);
-  cordic.iPhi(phi);
-  cordic.oX(x);
-  cordic.oY(y);
+  master.i_clk(clk);
+  master.o_nrst(nrst);
+  master.o_adr(adr);
+  master.io_data(data);
+  master.o_we(we);
+  master.o_cyc(cyc);
+  master.o_stb(stb);
+  master.o_sel(sel);
+  master.i_ack(ack);
 
-  tb.oStart(startCordic);
-  tb.iRdy(cordicReady);
-  tb.oPhi(phi);
-  tb.iX(x);
-  tb.iY(y);
+  memory.i_clk(clk);
+  memory.i_nrst(nrst);
+  memory.i_adr(adr);
+  memory.io_data(data);
+  memory.i_we(we);
+  memory.i_cyc(cyc);
+  memory.i_stb(stb);
+  memory.i_sel(sel);
+  memory.o_ack(ack);
 
   // Configure trace file
   sc_trace_file *tf;
-  tf = sc_create_vcd_trace_file("bin/cordic_trace");
+  tf = sc_create_vcd_trace_file("bin/model_cc_trace");
   tf->delta_cycles(true);
-  sc_trace(tf, startCordic, "startCordic");
-  sc_trace(tf, cordicReady, "cordicReady");
-  sc_trace(tf, phi, "PHI");
-  sc_trace(tf, x, "X");
-  sc_trace(tf, y, "Y");
+  sc_trace(tf, clk, "clk");
+  sc_trace(tf, nrst, "nrst");
+
+  sc_trace(tf, adr, "adr");
+  sc_trace(tf, data, "data");
+  sc_trace(tf, we, "we");
+  sc_trace(tf, cyc, "cyc");
+  sc_trace(tf, stb, "stb");
+  sc_trace(tf, sel, "sel");
+  sc_trace(tf, ack, "ack");
 
   // start simulation
   sc_start(100, SC_NS);

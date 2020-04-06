@@ -1,25 +1,24 @@
-#ifndef _CORDIC_H
-#define _CORDIC_H
+#ifndef _MEMORY_H
+#define _MEMORY_H
 
-#define SC_INCLUDE_FX  // for fixed-point data types (like sc_ufixed)
 #include <systemc.h>
 
-/* NOTE: The format for ufixed is: ufixed<TOTAL_BITS, INTEGER_BITS>  */
-typedef sc_ufixed<22, 1, SC_RND, SC_SAT> phi_t;
-typedef sc_ufixed<16, 0, SC_RND, SC_SAT> x_t;
-typedef sc_ufixed<16, 0, SC_RND, SC_SAT> y_t;
+SC_MODULE(Memory) {
+  sc_in<bool> i_clk;
+  sc_in<bool> i_nrst;
 
-SC_MODULE(Cordic) {
-  sc_in<bool> iStart;
-  sc_out<bool> oRdy;
-  sc_in<phi_t> iPhi;
-  sc_out<x_t> oX;
-  sc_out<y_t> oY;
+  sc_in<uint32_t> i_adr;
+  sc_inout<uint32_t> io_data;
+  sc_in<bool> i_we;
+  sc_in<bool> i_cyc;
+  sc_in<bool> i_stb;
+  sc_in<uint8_t> i_sel;
+  sc_out<bool> o_ack;
 
-  SC_CTOR(Cordic);
+  SC_CTOR(Memory);
 
  private:
   void calc();
 };
 
-#endif /* _CORDIC_H */
+#endif /* _MEMORY_H */
