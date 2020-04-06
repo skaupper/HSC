@@ -2,27 +2,43 @@
 
 using namespace std;
 
-static uint32_t singleRead(uint32_t addr) {
-  cout << "singleRead()  @ " << sc_time_stamp() << endl;
+uint32_t Master::singleRead(uint32_t addr) {
+  cout << name() << "::singleRead()  @ " << sc_time_stamp() << endl;
+
   wait(i_clk.posedge_event());
+  o_adr = addr;
+  o_sel = 0xFF;
+  o_we = 0;
+  o_stb = 1;
+  o_cyc = 1;
 
-  /*
-    $display("singleRead @%0tns", $time);
+  // while (!i_ack)
+  //  wait(i_clk.posedge_event());
 
-    sigs.cb.adr <= addr;
-    sigs.cb.sel <= '1; sigs.cb.we <= 0;
-    sigs.cb.stb <= 1;
-    sigs.cb.cyc <= 1;
+  wait(i_ack.posedge_event());
+  wait(i_clk.posedge_event());  // TODO: need to wait for i_ack AND i_clk here?
+  uint32_t rd_data = i_data;
+  o_stb = 0;
+  o_cyc = 0;
 
-    @(sigs.cb iff(sigs.cb.ack == 1));
-    data = sigs.cb.datS;
-    sigs.cb.stb <= 0;
-    sigs.cb.cyc <= 0;
-   */
+  return rd_data;
 }
 
-static void singleWrite(uint32_t addr, uint32_t data) {
-  cout << "singleWrite() @ " << sc_time_stamp() << endl;
+void Master::singleWrite(uint32_t addr, uint32_t data) {
+  cout << name() << "::singleWrite() @ " << sc_time_stamp() << endl;
+
+  wait(i_clk.posedge_event());
+  o_adr = addr;
+  o_data = data;
+  o_sel = 0xFF;
+  o_we = 1;
+  o_stb = 1;
+  o_cyc = 1;
+
+  //  wait(i_ack.posedge_event());
+  wait(i_clk.posedge_event());  // TODO: need to wait for i_ack AND i_clk here?
+  o_stb = 0;
+  o_cyc = 0;
 }
 
 // ----------------------------------------------------------------------- //
@@ -38,7 +54,8 @@ void Master::doStimulate() {
   uint32_t rd_data;
 
   /* Perform write-readback-check on all addresses */
-  for (int addr = 0; addr < Memory::memory_depth_c; addr++) {
+  for (uint32_t addr = 0; addr < Memory::memory_depth_c; addr++) {
+    cout << "addr = " << addr << endl;
     wr_data = addr * 3;
 
     singleWrite(addr, wr_data);
@@ -49,7 +66,7 @@ void Master::doStimulate() {
 
   /* Perform write-readback-check on all addresses */
   uint32_t addr;
-  for (int i = 0; i < Memory::memory_depth_c; i++) {
+  for (uint32_t i = 0; i < Memory::memory_depth_c; i++) {
     wr_data = rand();
     addr = rand() % Memory::memory_depth_c;
 

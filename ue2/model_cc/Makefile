@@ -2,7 +2,7 @@ BIN_NAME=ue02_cc
 
 # Compile and link flags
 DEFINES=
-CPPFLAGS=-Wall -pedantic --std=c++17 -O2 -g $(addprefix -D,$(DEFINES))
+CPPFLAGS=-Wall -pedantic --std=c++17 -O0 -g $(addprefix -D,$(DEFINES))
 LDFLAGS=-lpthread -lsystemc
 
 # Directory constants
