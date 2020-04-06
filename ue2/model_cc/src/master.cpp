@@ -3,9 +3,6 @@
 using namespace std;
 
 uint32_t Master::singleRead(uint32_t addr) {
-  // cout << name() << "::singleRead()  @ " << sc_time_stamp() << endl;
-
-  // wait(i_clk.posedge_event());
   o_adr = addr;
   o_sel = 0xFF;
   o_we = 0;
@@ -23,9 +20,6 @@ uint32_t Master::singleRead(uint32_t addr) {
 }
 
 void Master::singleWrite(uint32_t addr, uint32_t data) {
-  // cout << name() << "::singleWrite() @ " << sc_time_stamp() << endl;
-
-  // wait(i_clk.posedge_event());
   o_adr = addr;
   o_data = data;
   o_sel = 0xFF;
@@ -61,7 +55,6 @@ void Master::doStimulate() {
 
   cout << "### Perform write-read-check on all addresses ###" << endl;
   for (uint32_t addr = 0; addr < Memory::memory_depth_c; addr++) {
-    // cout << "(test 1) write-read addr=" << addr << endl;
     wr_data = addr * 3;
 
     singleWrite(addr, wr_data);
@@ -73,7 +66,6 @@ void Master::doStimulate() {
   cout << "### Perform 10^6 write-read-check on random addresses ###" << endl;
   uint32_t addr;
   for (uint32_t i = 0; i < pow(10, 3); i++) {
-    // cout << "(test 2) write-read i=" << i << endl;
     wr_data = rand();
     addr = rand() % Memory::memory_depth_c;
 
@@ -82,5 +74,6 @@ void Master::doStimulate() {
 
     sc_assert(rd_data == wr_data);
   }
-  cout << "### Done. ###" << endl;
+
+  cout << "### Test sequence done. ###" << endl;
 }
