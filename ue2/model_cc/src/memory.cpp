@@ -8,9 +8,12 @@ Memory::Memory(sc_module_name name) : sc_module(name) {
 
 /* Listens for signals */
 void Memory::operate() {
-  /* Random number of waitstates in range 1..10 */
-  uint8_t num_waitstates = (rand() % 10) + 1;
+  uint8_t num_waitstates;
+
   while (true) {
+    /* Random number of waitstates in range 1..10 */
+    num_waitstates = (rand() % 10) + 1;
+
     wait(i_clk.posedge_event());
 
     /* Assert illegal input */

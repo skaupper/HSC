@@ -1,3 +1,5 @@
+#include <chrono>
+
 #include "master.h"
 #include "memory.h"
 
@@ -58,8 +60,19 @@ int sc_main(int argc, char *argv[]) {
   sc_trace(tf, sel, "sel");
   sc_trace(tf, ack, "ack");
 
-  // start simulation
-  sc_start(100, SC_US);
+  std::chrono::time_point<std::chrono::system_clock> start, end;
+  start = std::chrono::system_clock::now();
+
+  // Start simulation
+  sc_start(1, SC_MS);  // mind. 60 ms
+
+  end = std::chrono::system_clock::now();
+  int duration_ms =
+      std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
+          .count();
+
+  cout << "Simulation took " << sc_delta_count() << " delta cycles." << endl;
+  cout << "Simulation took " << duration_ms / 1000. << " seconds." << endl;
 
   return 0;
 }
