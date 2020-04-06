@@ -7,7 +7,8 @@ int sc_main(int argc, char *argv[]) {
   sc_signal<bool> nrst;
 
   sc_signal<uint32_t> adr;
-  sc_signal<uint32_t> data;
+  sc_signal<uint32_t> data_to_mem;
+  sc_signal<uint32_t> data_from_mem;
   sc_signal<bool> we;
   sc_signal<bool> cyc;
   sc_signal<bool> stb;
@@ -22,7 +23,8 @@ int sc_main(int argc, char *argv[]) {
   master.i_clk(clk);
   master.o_nrst(nrst);
   master.o_adr(adr);
-  master.io_data(data);
+  master.i_data(data_from_mem);
+  master.o_data(data_to_mem);
   master.o_we(we);
   master.o_cyc(cyc);
   master.o_stb(stb);
@@ -32,7 +34,8 @@ int sc_main(int argc, char *argv[]) {
   memory.i_clk(clk);
   memory.i_nrst(nrst);
   memory.i_adr(adr);
-  memory.io_data(data);
+  memory.i_data(data_to_mem);
+  memory.o_data(data_from_mem);
   memory.i_we(we);
   memory.i_cyc(cyc);
   memory.i_stb(stb);
@@ -47,7 +50,8 @@ int sc_main(int argc, char *argv[]) {
   sc_trace(tf, nrst, "nrst");
 
   sc_trace(tf, adr, "adr");
-  sc_trace(tf, data, "data");
+  sc_trace(tf, data_to_mem, "data_to_mem");
+  sc_trace(tf, data_from_mem, "data_from_mem");
   sc_trace(tf, we, "we");
   sc_trace(tf, cyc, "cyc");
   sc_trace(tf, stb, "stb");
@@ -55,7 +59,7 @@ int sc_main(int argc, char *argv[]) {
   sc_trace(tf, ack, "ack");
 
   // start simulation
-  sc_start(100, SC_NS);
+  sc_start(1000, SC_NS);
 
   return 0;
 }

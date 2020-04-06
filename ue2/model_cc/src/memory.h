@@ -8,7 +8,8 @@ SC_MODULE(Memory) {
   sc_in<bool> i_nrst;
 
   sc_in<uint32_t> i_adr;
-  sc_inout<uint32_t> io_data;
+  sc_in<uint32_t> i_data;
+  sc_out<uint32_t> o_data;
   sc_in<bool> i_we;
   sc_in<bool> i_cyc;
   sc_in<bool> i_stb;
@@ -17,8 +18,11 @@ SC_MODULE(Memory) {
 
   SC_CTOR(Memory);
 
+  static uint32_t const memory_depth_c = 4096;
+
  private:
-  void calc();
+  void operate();
+  uint32_t data[memory_depth_c];
 };
 
 #endif /* _MEMORY_H */
