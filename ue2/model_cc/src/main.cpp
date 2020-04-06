@@ -59,8 +59,7 @@ int sc_main(int argc, char *argv[]) {
   sc_trace(tf, ack, "ack");
 
   // Start simulation
-  sc_start(1, SC_MS);  // mind. 60 ms
-
+  sc_start(155, SC_MS);
   cout << "Simulation took " << sc_delta_count() << " delta cycles." << endl;
 
   return 0;

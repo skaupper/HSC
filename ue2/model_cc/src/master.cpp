@@ -75,7 +75,7 @@ void Master::doStimulate() {
   cout << "### Perform 10^6 write-read-checks on random addresses ###" << endl;
   stw::Start();
   uint32_t addr;
-  for (uint32_t i = 0; i < pow(10, 3); i++) {
+  for (uint32_t i = 0; i < pow(10, 6); i++) {
     wr_data = rand();
     addr = rand() % Memory::memory_depth_c;
 
@@ -86,5 +86,5 @@ void Master::doStimulate() {
   }
   cout << "Took " << stw::Stop() << " seconds.\n" << endl;
 
-  cout << "### Test sequence done. ###" << endl;
+  cout << "### Test sequence done [" << sc_time_stamp() << "] ###" << endl;
 }
