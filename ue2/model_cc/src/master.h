@@ -2,7 +2,6 @@
 #define _MASTER_H
 
 #include <systemc.h>
-#include <time.h>
 
 #include "memory.h"
 

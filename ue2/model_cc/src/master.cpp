@@ -1,5 +1,7 @@
 #include "master.h"
 
+#include "StopWatch.h"
+
 using namespace std;
 
 uint32_t Master::singleRead(uint32_t addr) {
@@ -53,17 +55,25 @@ void Master::doStimulate() {
   o_nrst = 1;
   wait(SC_ZERO_TIME);
 
-  cout << "### Perform write-read-check on all addresses ###" << endl;
+  cout << "### Perform write on all addresses ###" << endl;
+  stw::Start();
   for (uint32_t addr = 0; addr < Memory::memory_depth_c; addr++) {
     wr_data = addr * 3;
-
     singleWrite(addr, wr_data);
+  }
+  cout << "Took " << stw::Stop() << " seconds.\n" << endl;
+
+  cout << "### Perform read on all addresses ###" << endl;
+  stw::Start();
+  for (uint32_t addr = 0; addr < Memory::memory_depth_c; addr++) {
     rd_data = singleRead(addr);
 
-    sc_assert(rd_data == wr_data);
+    sc_assert(rd_data == addr * 3);
   }
+  cout << "Took " << stw::Stop() << " seconds.\n" << endl;
 
-  cout << "### Perform 10^6 write-read-check on random addresses ###" << endl;
+  cout << "### Perform 10^6 write-read-checks on random addresses ###" << endl;
+  stw::Start();
   uint32_t addr;
   for (uint32_t i = 0; i < pow(10, 3); i++) {
     wr_data = rand();
@@ -74,6 +84,7 @@ void Master::doStimulate() {
 
     sc_assert(rd_data == wr_data);
   }
+  cout << "Took " << stw::Stop() << " seconds.\n" << endl;
 
   cout << "### Test sequence done. ###" << endl;
 }

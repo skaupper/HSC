@@ -1,4 +1,3 @@
-#include "StopWatch.h"
 #include "master.h"
 #include "memory.h"
 
@@ -59,15 +58,10 @@ int sc_main(int argc, char *argv[]) {
   sc_trace(tf, sel, "sel");
   sc_trace(tf, ack, "ack");
 
-  stw::Start();
-
   // Start simulation
   sc_start(1, SC_MS);  // mind. 60 ms
 
-  double duration_ms = stw::Stop();
-
   cout << "Simulation took " << sc_delta_count() << " delta cycles." << endl;
-  cout << "Simulation took " << duration_ms << " seconds." << endl;
 
   return 0;
 }
