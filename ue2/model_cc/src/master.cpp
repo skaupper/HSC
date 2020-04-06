@@ -35,7 +35,7 @@ void Master::singleWrite(uint32_t addr, uint32_t data) {
   o_stb = 1;
   o_cyc = 1;
 
-  //  wait(i_ack.posedge_event());
+  wait(i_ack.posedge_event());
   wait(i_clk.posedge_event());  // TODO: need to wait for i_ack AND i_clk here?
   o_stb = 0;
   o_cyc = 0;
@@ -48,19 +48,26 @@ Master::Master(sc_module_name name) : sc_module(name) {
 }
 
 void Master::doStimulate() {
-  srand(time(nullptr));
-
   uint32_t wr_data;
   uint32_t rd_data;
+  srand(time(nullptr));
+
+  /* Reset sequence on Memory */
+  o_nrst = 1;
+  wait(10 * clk_period_ns_c, SC_NS);
+  o_nrst = 0;
+  wait(15 * clk_period_ns_c, SC_NS);
+  o_nrst = 1;
+  wait(SC_ZERO_TIME);
 
   /* Perform write-readback-check on all addresses */
   for (uint32_t addr = 0; addr < Memory::memory_depth_c; addr++) {
-    cout << "addr = " << addr << endl;
     wr_data = addr * 3;
 
     singleWrite(addr, wr_data);
     rd_data = singleRead(addr);
 
+    wr_data += 17;
     sc_assert(rd_data == wr_data);
   }
 

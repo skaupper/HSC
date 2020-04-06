@@ -21,6 +21,8 @@ SC_MODULE(Master) {
 
   SC_CTOR(Master);
 
+  static uint32_t const clk_period_ns_c = 10;
+
  private:
   void doStimulate();
 

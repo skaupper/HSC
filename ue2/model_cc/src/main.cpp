@@ -3,7 +3,7 @@
 
 int sc_main(int argc, char *argv[]) {
   // Define signals
-  sc_clock clk("clk", 10, SC_NS);
+  sc_clock clk("clk", Master::clk_period_ns_c, SC_NS);
   sc_signal<bool> nrst;
 
   sc_signal<uint32_t> adr;
@@ -59,7 +59,7 @@ int sc_main(int argc, char *argv[]) {
   sc_trace(tf, ack, "ack");
 
   // start simulation
-  sc_start(1000, SC_NS);
+  sc_start(100, SC_US);
 
   return 0;
 }
