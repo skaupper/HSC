@@ -4,9 +4,9 @@
 #define SC_INCLUDE_DYNAMIC_PROCESSES
 
 #include <systemc.h>
-using namespace sc_core;
-using namespace sc_dt;
-using namespace std;
+// using namespace sc_core;
+// using namespace sc_dt;
+// using namespace std;
 
 #include <tlm.h>
 #include <tlm_utils/peq_with_cb_and_phase.h>
