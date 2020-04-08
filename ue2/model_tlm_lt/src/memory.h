@@ -5,6 +5,8 @@
 #include <tlm_utils/peq_with_cb_and_phase.h>
 #include <tlm_utils/simple_target_socket.h>
 
+#include "helper.h"
+
 static ofstream sout("memory.log");
 
 #define DEBUG
@@ -34,14 +36,6 @@ SC_MODULE(Memory) {
   void send_response(tlm::tlm_generic_payload & trans);
 
  private:
-  // Generate a random delay (with power-law distribution) to aid testing and
-  // stress the protocol
-  int rand_ps() {
-    int n = rand() % 100;
-    n = n * n * n;
-    return n / 100;
-  }
-
   int n_trans;
   bool response_in_progress;
   tlm::tlm_generic_payload* next_response_pending;

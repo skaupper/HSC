@@ -3,6 +3,7 @@
 
 #include <tlm.h>
 
+#include "helper.h"
 #include "memory_manager.h"
 
 // define to enable several messages
@@ -43,14 +44,6 @@ SC_MODULE(Master) {
   void check_transaction(tlm::tlm_generic_payload & trans);
 
  private:
-  // Generate a random delay (with power-law distribution) to aid testing and
-  // stress the protocol
-  int rand_ps() {
-    int n = rand() % 100;
-    n = n * n * n;
-    return n / 100;
-  }
-
   mm m_mm;
   int data[16];
   tlm::tlm_generic_payload* request_in_progress;
