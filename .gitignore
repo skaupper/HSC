@@ -2,4 +2,6 @@
 obj/
 bin/
 
+*.log
+
 .vscode/

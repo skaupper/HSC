@@ -13,7 +13,7 @@ using namespace std;
 #include <tlm_utils/simple_initiator_socket.h>
 #include <tlm_utils/simple_target_socket.h>
 
-static ofstream fout("foo.txt");
+static ofstream fout("memory_manager.log");
 
 // **************************************************************************************
 // User-defined memory manager, which maintains a pool of transactions
@@ -87,4 +87,4 @@ void mm::free(gp_t* trans) {
   empties = free_list->prev;
 }
 
-#endif
+#endif /* MEMORY_MANAGER_H_ */
