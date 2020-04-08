@@ -1,18 +1,9 @@
 #ifndef _MASTER_H_
 #define _MASTER_H_
 
-// #include <systemc.h>
+#include <tlm.h>
 
 #include "memory_manager.h"
-// using namespace sc_core;
-// using namespace sc_dt;
-// using namespace std;
-
-// #include <time.h>
-#include <tlm.h>
-// #include <tlm_utils/peq_with_cb_and_phase.h>
-// #include <tlm_utils/simple_initiator_socket.h>
-// #include <tlm_utils/simple_target_socket.h>
 
 // define to enable several messages
 #define DEBUG
