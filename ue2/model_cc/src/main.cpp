@@ -3,7 +3,7 @@
 
 int sc_main(int argc, char *argv[]) {
   // Define signals
-  sc_clock clk("clk", Master::CLK_PERIOD_NS, SC_NS);
+  sc_clock clk("clk", CLK_PERIOD_NS, SC_NS);
   sc_signal<bool> nrst;
 
   sc_signal<uint32_t> adr;

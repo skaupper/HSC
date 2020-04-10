@@ -3,6 +3,8 @@
 
 #include <systemc.h>
 
+#include "parameters.h"
+
 SC_MODULE(Memory) {
   sc_in<bool> i_clk;
   sc_in<bool> i_nrst;
@@ -17,8 +19,6 @@ SC_MODULE(Memory) {
   sc_out<bool> o_ack;
 
   SC_CTOR(Memory);
-
-  static uint32_t const MEMORY_DEPTH = 4096;
 
  private:
   void operate();

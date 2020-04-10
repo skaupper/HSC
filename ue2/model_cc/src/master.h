@@ -20,8 +20,6 @@ SC_MODULE(Master) {
 
   SC_CTOR(Master);
 
-  static uint32_t const CLK_PERIOD_NS = 10;
-
   uint32_t singleRead(uint32_t addr);
   void singleWrite(uint32_t addr, uint32_t data);
 
