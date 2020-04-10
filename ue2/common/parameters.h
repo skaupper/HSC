@@ -2,7 +2,7 @@
 #define _PARAMETERS_H_
 
 /* Output debug messages */
-#define OUTPUT_DEBUG_MSG true
+#define OUTPUT_DEBUG_MSG false
 
 /* Number of randomized write-read tests that are executed */
 #define NUM_RANDOM_TESTS (uint32_t)(pow(10, 6))
