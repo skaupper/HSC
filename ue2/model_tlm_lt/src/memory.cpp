@@ -65,7 +65,6 @@ void Memory::peq_cb(tlm::tlm_generic_payload& trans,
           break;
         }
       }
-
       break;
 
     case tlm::END_RESP:

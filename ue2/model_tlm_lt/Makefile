@@ -2,7 +2,7 @@ BIN_NAME=ue02_tlm_lt
 
 # Compile and link flags
 DEFINES=
-CPPFLAGS=-Wall -Werror -pedantic --std=c++17 -O2 -g $(addprefix -D,$(DEFINES))
+CPPFLAGS=-Wall -Werror -pedantic --std=c++17 -O0 -g $(addprefix -D,$(DEFINES))
 LDFLAGS=-lpthread -lsystemc
 
 # Directory constants

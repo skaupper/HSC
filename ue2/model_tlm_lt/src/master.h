@@ -23,7 +23,7 @@ SC_MODULE(Master) {
   /*********************************************************
       Process of the module
   *********************************************************/
-  void thread_process();
+  void stimuli_process();
 
   /*********************************************************
       TLM-2 backward non-blocking transport method

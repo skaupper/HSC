@@ -10,10 +10,10 @@ Master::Master(sc_module_name name)
   socket.register_nb_transport_bw(this, &Master::nb_transport_bw);
 
   // process -> doing some r/w accesses
-  SC_THREAD(thread_process);
+  SC_THREAD(stimuli_process);
 }
 
-void Master::thread_process() {
+void Master::stimuli_process() {
   // payload object
   tlm::tlm_generic_payload* trans;
   // TLM phase
@@ -23,8 +23,9 @@ void Master::thread_process() {
 
   // init random function
   srand(time(NULL));
+
   // Generate a sequence of random r/w transactions
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 1; i++) {
     // generate random adr
     int adr = rand();
     // generate random TLM command, either read or write command
