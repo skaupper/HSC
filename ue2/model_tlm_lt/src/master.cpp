@@ -96,7 +96,7 @@ uint32_t Master::singleRead(uint32_t addr) {
     SC_REPORT_ERROR("TLM-2", txt);
   }
 
-#ifdef DEBUG
+#ifdef DEBUG_MSG
   cout << "trans = { " << (cmd ? 'W' : 'R') << ", " << hex << addr
        << " } , data = " << hex << data << " at time " << sc_time_stamp()
        << " delay = " << delay << endl;
@@ -136,7 +136,7 @@ void Master::singleWrite(uint32_t addr, uint32_t data) {
     SC_REPORT_ERROR("TLM-2", txt);
   }
 
-#ifdef DEBUG
+#ifdef DEBUG_MSG
   cout << "trans = { " << (cmd ? 'W' : 'R') << ", " << hex << addr
        << " } , data = " << hex << data << " at time " << sc_time_stamp()
        << " delay = " << delay << endl;

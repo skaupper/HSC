@@ -2,17 +2,14 @@
 #define _MEMORY_H_
 
 #include <systemc.h>
-#include <tlm_utils/peq_with_cb_and_phase.h>
 #include <tlm_utils/simple_target_socket.h>
 
 #include "helper.h"
 
-static ofstream sout("memory.log");
-
-#define DEBUG
+// #define DEBUG_MSG
 
 SC_MODULE(Memory) {
-  // TLM-2 socket, defaults to 32-bits wide, base protocol
+  /* target socket, defaults to 32-bits wide, base protocol */
   tlm_utils::simple_target_socket<Memory> mSocket;
 
   // constructor: init socket, and all other members

@@ -13,7 +13,7 @@ Memory::Memory(sc_module_name name) : sc_module(name), mSocket("bus_rw") {
 void Memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay) {
   // read parameters of transaction object
   tlm::tlm_command cmd = trans.get_command();
-  uint64_t adr = trans.get_address() / 4;
+  uint64_t adr = trans.get_address();
   // unsigned int *  ptr = reinterpret_cast<unsigned int
   // *>(trans.get_data_ptr());
   unsigned char* ptr = trans.get_data_ptr();
