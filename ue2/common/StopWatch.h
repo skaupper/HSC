@@ -1,11 +1,9 @@
 #ifndef STOPWATCH_H
 #define STOPWATCH_H
 
-
 namespace stw {
-   void   Start ();
-   double Stop  ();   // Returns seconds.
-}
+void Start();
+double Stop();
+}  // namespace stw
 
-
-#endif   // STOPWATCH_H
+#endif /* STOPWATCH_H */
