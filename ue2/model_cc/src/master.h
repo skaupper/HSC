@@ -22,11 +22,11 @@ SC_MODULE(Master) {
 
   static uint32_t const CLK_PERIOD_NS = 10;
 
- private:
-  void stimuli_process();
-
   uint32_t singleRead(uint32_t addr);
   void singleWrite(uint32_t addr, uint32_t data);
+
+ private:
+  void stimuli_process();
 };
 
 #endif /* _MASTER_H */

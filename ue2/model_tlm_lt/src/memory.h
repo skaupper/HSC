@@ -4,7 +4,7 @@
 #include <systemc.h>
 #include <tlm_utils/simple_target_socket.h>
 
-#include "testcases.h"
+#include "parameters.h"
 
 SC_MODULE(Memory) {
   /* target socket, with default settings */
