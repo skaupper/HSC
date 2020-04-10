@@ -9,7 +9,6 @@ SC_MODULE(top) {
   Memory *memory;
 
   SC_CTOR(top) {
-    // Instantiate components
     master = new Master("initiator");
     memory = new Memory("target");
 

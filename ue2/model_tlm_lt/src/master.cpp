@@ -45,10 +45,8 @@ void Master::stimuli_process() {
   cout << "### Test sequence done [" << sc_time_stamp() << "] ###" << endl;
 }
 
-static void prepareTransactionDefaults(tlm::tlm_generic_payload* trans) {
+void Master::prepareTransactionDefaultParams(tlm::tlm_generic_payload* trans) {
   // configure standard set of attributes
-  // Initialize 8 out of the 10 attributes, byte_enable_length and
-  // extensions being unused
   trans->set_data_length(4);         // length of data in bytes
   trans->set_streaming_width(4);     // width of streaming burst, for
                                      // non streaming set value equal
@@ -57,7 +55,7 @@ static void prepareTransactionDefaults(tlm::tlm_generic_payload* trans) {
                                      // ptr is set to 0
   trans->set_byte_enable_ptr(0);     // set to 0 to indicate that byte
                                      // enables are unused
-  trans->set_dmi_allowed(false);     // will may be set by the target
+  trans->set_dmi_allowed(false);     // will maybe set by the target
                                      // to indicate a DMI (direct
                                      // memory interface)
   // status may be set by the target
@@ -65,29 +63,24 @@ static void prepareTransactionDefaults(tlm::tlm_generic_payload* trans) {
 }
 
 uint32_t Master::singleRead(uint32_t addr) {
-  int data;
+  int rd_data;
 
   tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
-  // set delay of transaction
-  sc_time delay = sc_time(20, SC_NS);
-  // TLM command object
-  tlm::tlm_command cmd;
+  sc_time delay;
 
-  // Read back written data
-  // prepare transaction -> set parameter
-  prepareTransactionDefaults(trans);
-  // set specific parameter for read operation
-  cmd = tlm::TLM_READ_COMMAND;
-  trans->set_command(cmd);   // read cmd
-  trans->set_address(addr);  // address for access
-  // pointer to a data buffer
-  trans->set_data_ptr(reinterpret_cast<unsigned char*>(&data));
+  prepareTransactionDefaultParams(trans);
 
-  // call b_transport function of target ->
-  // implemented by the target, executed by the initiator
+  /* Set specific parameters for read operation */
+  trans->set_command(tlm::TLM_READ_COMMAND);
+  trans->set_address(addr);
+  /* Pointer to the buffer, in which data will be written by the memory slave */
+  trans->set_data_ptr(reinterpret_cast<unsigned char*>(&rd_data));
+
+  /* Call b_transport function of target ->
+   * (It's implemented in the target, but executed by the initiator) */
   mSocket->b_transport(*trans, delay);
 
-  // Initiator obliged to check response status and delay
+  /* Initiator needs to check response status */
   if (trans->is_response_error()) {
     char txt[100];
     sprintf(txt,
@@ -97,37 +90,33 @@ uint32_t Master::singleRead(uint32_t addr) {
   }
 
 #ifdef DEBUG_MSG
-  cout << "trans = { " << (cmd ? 'W' : 'R') << ", " << hex << addr
-       << " } , data = " << hex << data << " at time " << sc_time_stamp()
-       << " delay = " << delay << endl;
+  cout << "trans = { R, " << hex << addr << " } , data = " << hex << rd_data
+       << " at time " << sc_time_stamp() << " delay = " << delay << endl;
 #endif
 
-  // Realize the delay annotated onto the transport call
+  /* Realize the delay that was annotated onto the transport call */
   wait(delay);
 
-  return data;
+  return rd_data;
 }
 
 void Master::singleWrite(uint32_t addr, uint32_t data) {
   tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
-  // set delay of transaction
-  sc_time delay = sc_time(20, SC_NS);
-  // TLM command object
-  tlm::tlm_command cmd;
+  sc_time delay;
 
-  prepareTransactionDefaults(trans);
-  // set specific parameters
-  cmd = tlm::TLM_WRITE_COMMAND;
-  trans->set_command(cmd);   // write cmd
-  trans->set_address(addr);  // address for access
-  // pointer to a data buffer
+  prepareTransactionDefaultParams(trans);
+
+  /* Set specific parameters for write operation */
+  trans->set_command(tlm::TLM_WRITE_COMMAND);
+  trans->set_address(addr);
+  /* Pointer to the buffer, of which data will be read from by the slave */
   trans->set_data_ptr(reinterpret_cast<unsigned char*>(&data));
 
-  // call b_transport function of target ->
-  // implemented by the target, executed by the initiator
+  /* Call b_transport function of target ->
+   * (It's implemented in the target, but executed by the initiator) */
   mSocket->b_transport(*trans, delay);
 
-  // Initiator obliged to check response status and delay
+  /* Initiator needs to check response status */
   if (trans->is_response_error()) {
     char txt[100];
     sprintf(txt,
@@ -137,11 +126,10 @@ void Master::singleWrite(uint32_t addr, uint32_t data) {
   }
 
 #ifdef DEBUG_MSG
-  cout << "trans = { " << (cmd ? 'W' : 'R') << ", " << hex << addr
-       << " } , data = " << hex << data << " at time " << sc_time_stamp()
-       << " delay = " << delay << endl;
+  cout << "trans = { W, " << hex << addr << " } , data = " << hex << data
+       << " at time " << sc_time_stamp() << " delay = " << delay << endl;
 #endif
 
-  // Realize the delay annotated onto the transport call
+  /* Realize the delay that was annotated onto the transport call */
   wait(delay);
 }

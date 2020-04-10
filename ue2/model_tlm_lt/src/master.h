@@ -6,7 +6,7 @@
 
 #include "helper.h"
 
-// #define DEBUG_MSG
+//#define DEBUG_MSG
 
 SC_MODULE(Master) {
   /* initiator socket, with default settings */
@@ -20,6 +20,7 @@ SC_MODULE(Master) {
   void singleWrite(uint32_t addr, uint32_t data);
 
  private:
+  void prepareTransactionDefaultParams(tlm::tlm_generic_payload * trans);
 };
 
 #endif /* _MASTER_H_ */

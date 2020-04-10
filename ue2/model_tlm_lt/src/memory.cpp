@@ -41,18 +41,18 @@ void Memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay) {
 
   // read or write data -> can be copied by memcpy or direct access via pointer
   if (cmd == tlm::TLM_READ_COMMAND) {
-    memcpy(ptr, &mem_data[adr], len);
+    memcpy(ptr, &mMem_data[adr], len);
   } else if (cmd == tlm::TLM_WRITE_COMMAND) {
-    memcpy(&mem_data[adr], ptr, len);
+    memcpy(&mMem_data[adr], ptr, len);
   }
 
-  // Set DMI hint to indicated that DMI is supported
-  trans.set_dmi_allowed(true);
+  /* Set DMI hint to indicate that DMI is not supported */
+  trans.set_dmi_allowed(false);
 
   // finaly set the response status attribute of the gerneric payload to
   // indicate successful and complete transaction
   trans.set_response_status(tlm::TLM_OK_RESPONSE);
 
-  /* Random number of 'waitstates' in range 1..10 */
-  delay += sc_time(clk_period_ns_c, SC_NS) * ((rand() % 10) + 1);
+  /* Random number of "waitstates" in range 1..10 "clk cycles" */
+  delay = sc_time(clk_period_ns_c, SC_NS) * ((rand() % 10) + 1);
 }
