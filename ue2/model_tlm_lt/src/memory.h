@@ -4,7 +4,6 @@
 #include <systemc.h>
 #include <tlm_utils/simple_target_socket.h>
 
-#include "helper.h"
 #include "testcases.h"
 
 SC_MODULE(Memory) {

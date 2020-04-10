@@ -4,8 +4,6 @@
 #include <systemc.h>
 #include <tlm_utils/simple_initiator_socket.h>
 
-#include "helper.h"
-
 SC_MODULE(Master) {
   /* initiator socket, with default settings */
   tlm_utils::simple_initiator_socket<Master> mSocket;
