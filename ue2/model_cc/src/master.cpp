@@ -1,6 +1,7 @@
 #include "master.h"
 
 #include "StopWatch.h"
+#include "testcases.h"
 
 using namespace std;
 
@@ -39,25 +40,25 @@ void Master::singleWrite(uint32_t addr, uint32_t data) {
 // ----------------------------------------------------------------------- //
 
 Master::Master(sc_module_name name) : sc_module(name) {
-  SC_THREAD(doStimulate);
+  SC_THREAD(stimuli_process);
 }
 
-void Master::doStimulate() {
+void Master::stimuli_process() {
+  /* Reset sequence on Memory */
+  o_nrst = 1;
+  wait(10 * CLK_PERIOD_NS, SC_NS);
+  o_nrst = 0;
+  wait(15 * CLK_PERIOD_NS, SC_NS);
+  o_nrst = 1;
+  wait(SC_ZERO_TIME);
+
   uint32_t wr_data;
   uint32_t rd_data;
   srand(time(nullptr));
 
-  /* Reset sequence on Memory */
-  o_nrst = 1;
-  wait(10 * clk_period_ns_c, SC_NS);
-  o_nrst = 0;
-  wait(15 * clk_period_ns_c, SC_NS);
-  o_nrst = 1;
-  wait(SC_ZERO_TIME);
-
   cout << "### Perform write on all addresses ###" << endl;
   stw::Start();
-  for (uint32_t addr = 0; addr < Memory::memory_depth_c; addr++) {
+  for (uint32_t addr = 0; addr < MEMORY_DEPTH; addr++) {
     wr_data = addr * 3;
     singleWrite(addr, wr_data);
   }
@@ -65,19 +66,20 @@ void Master::doStimulate() {
 
   cout << "### Perform read on all addresses ###" << endl;
   stw::Start();
-  for (uint32_t addr = 0; addr < Memory::memory_depth_c; addr++) {
+  for (uint32_t addr = 0; addr < MEMORY_DEPTH; addr++) {
     rd_data = singleRead(addr);
 
     sc_assert(rd_data == addr * 3);
   }
   cout << "Took " << stw::Stop() << " seconds.\n" << endl;
 
-  cout << "### Perform 10^6 write-read-checks on random addresses ###" << endl;
+  cout << "### Perform " << NUM_RANDOM_TESTS
+       << " write-read-checks on random addresses ###" << endl;
   stw::Start();
   uint32_t addr;
-  for (uint32_t i = 0; i < pow(10, 6); i++) {
+  for (uint32_t i = 0; i < NUM_RANDOM_TESTS; i++) {
     wr_data = rand();
-    addr = rand() % Memory::memory_depth_c;
+    addr = rand() % MEMORY_DEPTH;
 
     singleWrite(addr, wr_data);
     rd_data = singleRead(addr);
@@ -87,4 +89,5 @@ void Master::doStimulate() {
   cout << "Took " << stw::Stop() << " seconds.\n" << endl;
 
   cout << "### Test sequence done [" << sc_time_stamp() << "] ###" << endl;
+  sc_stop();
 }

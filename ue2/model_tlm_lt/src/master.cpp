@@ -2,6 +2,7 @@
 
 #include "StopWatch.h"
 #include "memory.h"
+#include "testcases.h"
 
 Master::Master(sc_module_name name) : sc_module(name) {
   SC_THREAD(stimuli_process);
@@ -13,7 +14,7 @@ void Master::stimuli_process() {
 
   cout << "### Perform write on all addresses ###" << endl;
   stw::Start();
-  for (uint32_t addr = 0; addr < Memory::memory_depth_c; addr++) {
+  for (uint32_t addr = 0; addr < MEMORY_DEPTH; addr++) {
     wr_data = addr * 3;
     singleWrite(addr, wr_data);
   }
@@ -21,19 +22,20 @@ void Master::stimuli_process() {
 
   cout << "### Perform read on all addresses ###" << endl;
   stw::Start();
-  for (uint32_t addr = 0; addr < Memory::memory_depth_c; addr++) {
+  for (uint32_t addr = 0; addr < MEMORY_DEPTH; addr++) {
     rd_data = singleRead(addr);
 
     sc_assert(rd_data == addr * 3);
   }
   cout << "Took " << stw::Stop() << " seconds.\n" << endl;
 
-  cout << "### Perform 10^6 write-read-checks on random addresses ###" << endl;
+  cout << "### Perform " << NUM_RANDOM_TESTS
+       << " write-read-checks on random addresses ###" << endl;
   stw::Start();
   uint32_t addr;
-  for (uint32_t i = 0; i < pow(10, 6); i++) {
+  for (uint32_t i = 0; i < NUM_RANDOM_TESTS; i++) {
     wr_data = rand();
-    addr = rand() % Memory::memory_depth_c;
+    addr = rand() % MEMORY_DEPTH;
 
     singleWrite(addr, wr_data);
     rd_data = singleRead(addr);
@@ -43,6 +45,7 @@ void Master::stimuli_process() {
   cout << "Took " << stw::Stop() << " seconds.\n" << endl;
 
   cout << "### Test sequence done [" << sc_time_stamp() << "] ###" << endl;
+  sc_stop();
 }
 
 void Master::prepareTransactionDefaultParams(tlm::tlm_generic_payload* trans) {
@@ -89,7 +92,7 @@ uint32_t Master::singleRead(uint32_t addr) {
     SC_REPORT_ERROR("TLM-2", txt);
   }
 
-#ifdef DEBUG_MSG
+#if (OUTPUT_DEBUG_MSG == true)
   cout << "trans = { R, " << hex << addr << " } , data = " << hex << rd_data
        << " at time " << sc_time_stamp() << " delay = " << delay << endl;
 #endif
@@ -125,7 +128,7 @@ void Master::singleWrite(uint32_t addr, uint32_t data) {
     SC_REPORT_ERROR("TLM-2", txt);
   }
 
-#ifdef DEBUG_MSG
+#if (OUTPUT_DEBUG_MSG == true)
   cout << "trans = { W, " << hex << addr << " } , data = " << hex << data
        << " at time " << sc_time_stamp() << " delay = " << delay << endl;
 #endif

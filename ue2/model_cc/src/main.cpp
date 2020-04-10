@@ -3,7 +3,7 @@
 
 int sc_main(int argc, char *argv[]) {
   // Define signals
-  sc_clock clk("clk", Master::clk_period_ns_c, SC_NS);
+  sc_clock clk("clk", Master::CLK_PERIOD_NS, SC_NS);
   sc_signal<bool> nrst;
 
   sc_signal<uint32_t> adr;
@@ -58,8 +58,8 @@ int sc_main(int argc, char *argv[]) {
   sc_trace(tf, sel, "sel");
   sc_trace(tf, ack, "ack");
 
-  // Start simulation
-  sc_start(155, SC_MS);
+  sc_start();
+
   cout << "Simulation took " << sc_delta_count() << " delta cycles." << endl;
 
   return 0;

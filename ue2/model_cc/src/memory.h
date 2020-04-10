@@ -18,11 +18,11 @@ SC_MODULE(Memory) {
 
   SC_CTOR(Memory);
 
-  static uint32_t const memory_depth_c = 4096;
+  static uint32_t const MEMORY_DEPTH = 4096;
 
  private:
   void operate();
-  uint32_t data[memory_depth_c];
+  uint32_t data[MEMORY_DEPTH];
 };
 
 #endif /* _MEMORY_H */

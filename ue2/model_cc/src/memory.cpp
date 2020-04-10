@@ -14,7 +14,7 @@ void Memory::operate() {
     wait(i_clk.posedge_event());
 
     /* Assert illegal input */
-    sc_assert(i_adr < memory_depth_c);
+    sc_assert(i_adr < MEMORY_DEPTH);
 
     if (i_nrst == 0) {
       o_data = 0;

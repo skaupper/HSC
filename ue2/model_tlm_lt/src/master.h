@@ -6,8 +6,6 @@
 
 #include "helper.h"
 
-//#define DEBUG_MSG
-
 SC_MODULE(Master) {
   /* initiator socket, with default settings */
   tlm_utils::simple_initiator_socket<Master> mSocket;

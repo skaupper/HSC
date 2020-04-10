@@ -22,7 +22,7 @@ void Memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay) {
   unsigned int wid = trans.get_streaming_width();
 
   // decode transaction and check parameters
-  if (adr >= (uint64_t)memory_depth_c) {
+  if (adr >= (uint64_t)MEMORY_DEPTH) {
     trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
     SC_REPORT_ERROR(
         "TLM-2", "Target does not support given generic payload transaction");
@@ -54,5 +54,5 @@ void Memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay) {
   trans.set_response_status(tlm::TLM_OK_RESPONSE);
 
   /* Random number of "waitstates" in range 1..10 "clk cycles" */
-  delay = sc_time(clk_period_ns_c, SC_NS) * ((rand() % 10) + 1);
+  delay = sc_time(CLK_PERIOD_NS, SC_NS) * ((rand() % 10) + 1);
 }
