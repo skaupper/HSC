@@ -1,183 +1,109 @@
 #include "master.h"
 
-Master::Master(sc_module_name name)
-    : sc_module(name),
-      socket("bus_rw"),
-      request_in_progress(0),       // pointer to a transaction
-      m_peq(this, &Master::peq_cb)  // event queue for pending notifications
-{
-  // Register callbacks for incoming interface method calls
-  socket.register_nb_transport_bw(this, &Master::nb_transport_bw);
-
-  // process -> doing some r/w accesses
+Master::Master(sc_module_name name) : sc_module(name) {
   SC_THREAD(stimuli_process);
 }
 
 void Master::stimuli_process() {
-  // payload object
-  tlm::tlm_generic_payload* trans;
-  // TLM phase
-  tlm::tlm_phase phase;
-  // delay
-  sc_time delay;
-
-  // init random function
-  srand(time(NULL));
-
-  // Generate a sequence of random r/w transactions
-  for (int i = 0; i < 1; i++) {
-    // generate random adr
-    int adr = rand();
-    // generate random TLM command, either read or write command
-    tlm::tlm_command cmd = static_cast<tlm::tlm_command>(rand() % 2);
-    // set data
-    if (cmd == tlm::TLM_WRITE_COMMAND)
-      data[i % 16] = rand();
-
-    // Grab a new transaction from the memory manager
-    trans = m_mm.allocate();
-    trans->acquire();
-
-    // Set all attributes except byte_enable_length and extensions (unused)
-    trans->set_command(cmd);
-    trans->set_address(adr);
-    trans->set_data_ptr(reinterpret_cast<unsigned char*>(&data[i % 16]));
-    trans->set_data_length(4);
-    trans->set_streaming_width(4);  // = data_length to indicate no streaming
-    trans->set_byte_enable_ptr(0);  // 0 indicates unused
-    trans->set_dmi_allowed(false);  // Mandatory initial value
-    trans->set_response_status(
-        tlm::TLM_INCOMPLETE_RESPONSE);  // Mandatory initial value
-
-    // Initiator must honor BEGIN_REQ/END_REQ exclusion rule
-    // so if pointer to transaction in request phase is not 0,
-    // wait until ongoing transaction enters response phase
-    if (request_in_progress) {
-      wait(end_request_event);
-    }
-    // transaction in request phase
-    request_in_progress = trans;
-    // set phase to BEGIN_REQ
-    phase = tlm::BEGIN_REQ;
-
-    // Timing annotation models processing time of initiator prior to call
-    delay = sc_time(rand_ps(), SC_PS);
-
-    // print status message of new transaction
-    cout << "new, trans = { " << (cmd ? 'W' : 'R') << ", " << hex << adr
-         << " } , data = " << hex << data << " at time " << sc_time_stamp()
-         << " delay = " << delay << endl;
-
-    // Non-blocking transport call on the forward path
-    tlm::tlm_sync_enum status;
-    status = socket->nb_transport_fw(*trans, phase, delay);
-
-    // Check value returned from nb_transport_fw
-    // if status == tlm::TLM_ACCEPTED, we must do nothing because
-    // cb function will be triggered
-    if (status == tlm::TLM_UPDATED) {
-      // slave used return path -> initiator must
-      // set event in order to trigger cb function
-      // The timing annotation must be honored
-      m_peq.notify(*trans, phase, delay);
-    } else if (status == tlm::TLM_COMPLETED) {
-      // The completion of the transaction necessarily ends the BEGIN_REQ
-      // phase
-      request_in_progress = 0;
-      // The target has terminated the transaction
-      check_transaction(*trans);
-    }
-    // wait some time before send new transaction
-    wait(sc_time(rand_ps(), SC_PS));
-  }
-
-  // wait some time before start new test case
-  wait(100, SC_NS);
-
-  // Allocate a transaction for one final, nominal call to b_transport
-  trans = m_mm.allocate();
-  trans->acquire();
-  trans->set_command(tlm::TLM_WRITE_COMMAND);
-  trans->set_address(0);
-  trans->set_data_ptr(reinterpret_cast<unsigned char*>(&data[0]));
-  trans->set_data_length(4);
-  trans->set_streaming_width(4);  // == data_length to indicate no streaming
-  trans->set_byte_enable_ptr(0);  // 0 indicates unused
-  trans->set_dmi_allowed(false);  // Mandatory initial value
-  trans->set_response_status(
-      tlm::TLM_INCOMPLETE_RESPONSE);  // Mandatory initial value
-
-  delay = sc_time(rand_ps(), SC_PS);
-
-  cout << "Calling b_transport at " << sc_time_stamp()
-       << " with delay = " << delay << endl;
-
-  // Call b_transport to demonstrate the b/nb conversion by the
-  // simple_target_socket
-  // -> call ends in the target's nb_transport, phases are handled internal
-  socket->b_transport(*trans, delay);
-  check_transaction(*trans);
 }
 
-tlm::tlm_sync_enum Master::nb_transport_bw(tlm::tlm_generic_payload& trans,
-                                           tlm::tlm_phase& phase,
-                                           sc_time& delay) {
-  // honor timing annotation
-  m_peq.notify(trans, phase, delay);
-  return tlm::TLM_ACCEPTED;
+static void prepareTransactionDefaults(tlm::tlm_generic_payload* trans) {
+  // configure standard set of attributes
+  // Initialize 8 out of the 10 attributes, byte_enable_length and
+  // extensions being unused
+  trans->set_data_length(4);         // length of data in bytes
+  trans->set_streaming_width(4);     // width of streaming burst, for
+                                     // non streaming set value equal
+                                     // to data length
+  trans->set_byte_enable_length(0);  // must not be set because the
+                                     // ptr is set to 0
+  trans->set_byte_enable_ptr(0);     // set to 0 to indicate that byte
+                                     // enables are unused
+  trans->set_dmi_allowed(false);     // will may be set by the target
+                                     // to indicate a DMI (direct
+                                     // memory interface)
+  // status may be set by the target
+  trans->set_response_status(tlm::TLM_INCOMPLETE_RESPONSE);
 }
 
-void Master::peq_cb(tlm::tlm_generic_payload& trans,
-                    const tlm::tlm_phase& phase) {
-#ifdef DEBUG
-  if (phase == tlm::END_REQ)
-    cout << hex << trans.get_address() << " END_REQ at " << sc_time_stamp()
-         << endl;
-  else if (phase == tlm::BEGIN_RESP)
-    cout << hex << trans.get_address() << " BEGIN_RESP at " << sc_time_stamp()
-         << endl;
-#endif
+uint32_t Master::singleRead(uint32_t addr) {
+  int data;
 
-  if (phase == tlm::END_REQ ||
-      (&trans == request_in_progress && phase == tlm::BEGIN_RESP)) {
-    // the end of the BEGIN_RESP phase
-    request_in_progress = 0;
-    end_request_event.notify();
-  } else if (phase == tlm::BEGIN_REQ || phase == tlm::END_RESP) {
-    SC_REPORT_FATAL("TLM-2", "Illegal transaction phase received by initiator");
-  }
+  tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+  // set delay of transaction
+  sc_time delay = sc_time(20, SC_NS);
+  // TLM command object
+  tlm::tlm_command cmd;
 
-  if (phase == tlm::BEGIN_RESP) {
-    check_transaction(trans);
+  // Read back written data
+  // prepare transaction -> set parameter
+  prepareTransactionDefaults(trans);
+  // set specific parameter for read operation
+  cmd = tlm::TLM_READ_COMMAND;
+  trans->set_command(cmd);   // read cmd
+  trans->set_address(addr);  // address for access
+  // pointer to a data buffer
+  trans->set_data_ptr(reinterpret_cast<unsigned char*>(&data));
 
-    // send final phase transition to target
-    // may copy back data in case of a read command
-    tlm::tlm_phase fw_phase = tlm::END_RESP;
-    sc_time delay = sc_time(rand_ps(), SC_PS);
-    socket->nb_transport_fw(trans, fw_phase, delay);
-    // return value will be ignored
-  }
-}
+  // call b_transport function of target ->
+  // implemented by the target, executed by the initiator
+  mSocket->b_transport(*trans, delay);
 
-void Master::check_transaction(tlm::tlm_generic_payload& trans) {
-  // check if an error occurs
-  if (trans.is_response_error()) {
+  // Initiator obliged to check response status and delay
+  if (trans->is_response_error()) {
     char txt[100];
     sprintf(txt,
-            "Transaction returned with error, response status = %s",
-            trans.get_response_string().c_str());
+            "Response error from b_transport, response status = %s",
+            trans->get_response_string().c_str());
     SC_REPORT_ERROR("TLM-2", txt);
   }
 
-  // otherwise read parameters and print status message
-  tlm::tlm_command cmd = trans.get_command();
-  sc_dt::uint64 adr = trans.get_address();
-  // int*             ptr = reinterpret_cast<int*>( trans.get_data_ptr() );
-
-  cout << "check, trans = { " << (cmd ? 'W' : 'R') << ", " << hex << adr
+#ifdef DEBUG
+  cout << "trans = { " << (cmd ? 'W' : 'R') << ", " << hex << addr
        << " } , data = " << hex << data << " at time " << sc_time_stamp()
-       << endl;
+       << " delay = " << delay << endl;
+#endif
 
-  // Allow the memory manager to free the transaction object
-  trans.release();
+  // Realize the delay annotated onto the transport call
+  wait(delay);
+
+  return data;
+}
+
+void Master::singleWrite(uint32_t addr, uint32_t data) {
+  tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+  // set delay of transaction
+  sc_time delay = sc_time(20, SC_NS);
+  // TLM command object
+  tlm::tlm_command cmd;
+
+  prepareTransactionDefaults(trans);
+  // set specific parameters
+  cmd = tlm::TLM_WRITE_COMMAND;
+  trans->set_command(cmd);   // write cmd
+  trans->set_address(addr);  // address for access
+  // pointer to a data buffer
+  trans->set_data_ptr(reinterpret_cast<unsigned char*>(&data));
+
+  // call b_transport function of target ->
+  // implemented by the target, executed by the initiator
+  mSocket->b_transport(*trans, delay);
+
+  // Initiator obliged to check response status and delay
+  if (trans->is_response_error()) {
+    char txt[100];
+    sprintf(txt,
+            "Response error from b_transport, response status = %s",
+            trans->get_response_string().c_str());
+    SC_REPORT_ERROR("TLM-2", txt);
+  }
+
+#ifdef DEBUG
+  cout << "trans = { " << (cmd ? 'W' : 'R') << ", " << hex << addr
+       << " } , data = " << hex << data << " at time " << sc_time_stamp()
+       << " delay = " << delay << endl;
+#endif
+
+  // Realize the delay annotated onto the transport call
+  wait(delay);
 }

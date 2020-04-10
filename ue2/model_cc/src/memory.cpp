@@ -11,9 +11,6 @@ void Memory::operate() {
   uint8_t num_waitstates;
 
   while (true) {
-    /* Random number of waitstates in range 1..10 */
-    num_waitstates = (rand() % 10) + 1;
-
     wait(i_clk.posedge_event());
 
     /* Assert illegal input */
@@ -23,6 +20,8 @@ void Memory::operate() {
       o_data = 0;
       o_ack = 0;
     } else if (i_cyc && i_stb) {
+      /* Random number of waitstates in range 1..10 */
+      num_waitstates = (rand() % 10) + 1;
       while (num_waitstates--)
         wait(i_clk.posedge_event());
 

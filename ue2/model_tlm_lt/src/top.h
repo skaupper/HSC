@@ -8,22 +8,18 @@
 
 #include "master.h"
 #include "memory.h"
-#include "tlm2_base_protocol_checker.h"
 
 SC_MODULE(top) {
   Master *master;
   Memory *memory;
-  tlm_utils::tlm2_base_protocol_checker<> *checker;
 
   SC_CTOR(top) {
     // Instantiate components
     master = new Master("initiator");
     memory = new Memory("target");
-    checker = new tlm_utils::tlm2_base_protocol_checker<>("checker");
 
     // Bind initiator socket to target socket
-    master->socket.bind(checker->target_socket);
-    checker->initiator_socket(memory->socket);
+    master->socket.bind(memory->socket);
   }
 };
 
