@@ -1,8 +1,10 @@
 #include "memory.h"
 
-Memory::Memory(sc_module_name name) : sc_module(name), socket("bus_rw") {
+Memory::Memory(sc_module_name name) : sc_module(name), mSocket("bus_rw") {
   // register callbacks for incoming interface method calls
-  socket.register_b_transport(this, &Memory::b_transport);
+  mSocket.register_b_transport(this, &Memory::b_transport);
+
+  srand(time(nullptr));
 }
 
 /*********************************************************
@@ -20,7 +22,7 @@ void Memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay) {
   unsigned int wid = trans.get_streaming_width();
 
   // decode transaction and check parameters
-  if (adr >= (uint64_t)MEM_SIZE) {
+  if (adr >= (uint64_t)memory_depth_c) {
     trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
     SC_REPORT_ERROR(
         "TLM-2", "Target does not support given generic payload transaction");

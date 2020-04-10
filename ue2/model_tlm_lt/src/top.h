@@ -19,7 +19,7 @@ SC_MODULE(top) {
     memory = new Memory("target");
 
     // Bind initiator socket to target socket
-    master->socket.bind(memory->socket);
+    master->mSocket.bind(memory->mSocket);
   }
 };
 
