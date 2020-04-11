@@ -33,4 +33,3 @@ CC is a more exact representation of hardware reality. It can simulate
 clock cycles. \
 Because of that it is much slower, since many more context
 switches, etc. have to be handled.
-

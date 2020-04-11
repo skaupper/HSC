@@ -15,6 +15,8 @@ SC_MODULE(Master) {
   uint32_t singleRead(uint32_t addr);
   void singleWrite(uint32_t addr, uint32_t data);
 
+  sc_time mAccumulatedDelay;
+
  private:
   void prepareTransactionDefaultParams(tlm::tlm_generic_payload * trans);
 };

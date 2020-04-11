@@ -4,6 +4,10 @@
 /* Output debug messages */
 #define OUTPUT_DEBUG_MSG false
 
+/* Accumulate transaction delays and wait at the end
+   This affects TLM_LT only. */
+#define ACCUMULATED_WAIT true
+
 /* Number of randomized write-read tests that are executed */
 #define NUM_RANDOM_TESTS (uint32_t)(pow(10, 6))
 

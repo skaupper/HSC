@@ -55,7 +55,12 @@ uint32_t Master::singleRead(uint32_t addr) {
 #endif
 
   /* Realize the delay that was annotated onto the transport call */
+#if (ACCUMULATED_WAIT == true)
+  mAccumulatedDelay += delay;
+  // cout << "READ: mAccumulatedDelay = " << mAccumulatedDelay << endl;
+#else
   wait(delay);
+#endif
 
   return rd_data;
 }
@@ -91,12 +96,18 @@ void Master::singleWrite(uint32_t addr, uint32_t data) {
 #endif
 
   /* Realize the delay that was annotated onto the transport call */
+#if (ACCUMULATED_WAIT == true)
+  mAccumulatedDelay += delay;
+  // cout << "WRITE: mAccumulatedDelay = " << mAccumulatedDelay << endl;
+#else
   wait(delay);
+#endif
 }
 
 // ----------------------------------------------------------------------- //
 
-Master::Master(sc_module_name name) : sc_module(name) {
+Master::Master(sc_module_name name)
+    : sc_module(name), mAccumulatedDelay(SC_ZERO_TIME) {
   SC_THREAD(stimuli_process);
 }
 
