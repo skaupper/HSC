@@ -60,7 +60,5 @@ int sc_main(int argc, char *argv[]) {
 
   sc_start();
 
-  cout << "Simulation took " << sc_delta_count() << " delta cycles." << endl;
-
   return 0;
 }

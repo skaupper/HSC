@@ -43,8 +43,10 @@ void run_test_sequence(T &master) {
   }
   std::cout << "Took " << stw::Stop() << " seconds.\n" << std::endl;
 
-  std::cout << "### Test sequence done [" << sc_time_stamp() << "] ###"
-            << std::endl;
+  sc_time duration_ns = sc_time_stamp();
+  std::cout << "### Test sequence done [ @ simulation time " << duration_ns
+            << " (" << duration_ns.to_seconds() << " s)] ###" << std::endl;
+  cout << "Simulation took " << sc_delta_count() << " delta cycles." << endl;
 }
 
 #endif /* _TESTCASES_H */

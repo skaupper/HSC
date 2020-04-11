@@ -5,16 +5,6 @@
 
 using namespace std;
 
-Master::Master(sc_module_name name) : sc_module(name) {
-  SC_THREAD(stimuli_process);
-}
-
-void Master::stimuli_process() {
-  run_test_sequence(*this);
-
-  sc_stop();
-}
-
 void Master::prepareTransactionDefaultParams(tlm::tlm_generic_payload* trans) {
   // configure standard set of attributes
   trans->set_data_length(4);         // length of data in bytes
@@ -102,4 +92,16 @@ void Master::singleWrite(uint32_t addr, uint32_t data) {
 
   /* Realize the delay that was annotated onto the transport call */
   wait(delay);
+}
+
+// ----------------------------------------------------------------------- //
+
+Master::Master(sc_module_name name) : sc_module(name) {
+  SC_THREAD(stimuli_process);
+}
+
+void Master::stimuli_process() {
+  run_test_sequence(*this);
+
+  sc_stop();
 }
