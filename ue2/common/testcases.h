@@ -5,7 +5,7 @@
 #include "parameters.h"
 
 template <typename T>
-static void waitWithOptionalDebugOutput(T &master) {
+static void wait_optional(T &master) {
 #if (ACCUMULATED_WAIT == true)
   cout << "sc_time_stamp before: " << sc_time_stamp().to_seconds() << endl;
   cout << "waiting accumulated delay (" << master.mAccumulatedDelay.to_seconds()
@@ -27,7 +27,7 @@ static void write_all_sequence(T &master) {
     wr_data = addr * 3;
     master.singleWrite(addr, wr_data);
   }
-  waitWithOptionalDebugOutput(master);
+  wait_optional(master);
   std::cout << "Took " << stw::Stop() << " seconds.\n" << std::endl;
 }
 
@@ -44,7 +44,7 @@ static void read_all_sequence(T &master) {
 
     sc_assert(rd_data == addr * 3);
   }
-  waitWithOptionalDebugOutput(master);
+  wait_optional(master);
   std::cout << "Took " << stw::Stop() << " seconds.\n" << std::endl;
 }
 
@@ -68,7 +68,7 @@ static void write_read_random_sequence(T &master) {
 
     sc_assert(rd_data == wr_data);
   }
-  waitWithOptionalDebugOutput(master);
+  wait_optional(master);
   std::cout << "Took " << stw::Stop() << " seconds.\n" << std::endl;
 }
 
