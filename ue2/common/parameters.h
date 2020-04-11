@@ -5,7 +5,8 @@
 #define OUTPUT_DEBUG_MSG false
 
 /* Accumulate transaction delays and wait at the end
-   This affects TLM_LT only. */
+   This affects TLM_LT only.
+   Must be set to false for CC. */
 #define ACCUMULATED_WAIT true
 
 /* Number of randomized write-read tests that are executed */

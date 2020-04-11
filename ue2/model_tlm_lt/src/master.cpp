@@ -112,7 +112,7 @@ Master::Master(sc_module_name name)
 }
 
 void Master::stimuli_process() {
-  run_test_sequence(*this);
+  run_test_sequences(*this);
 
   sc_stop();
 }

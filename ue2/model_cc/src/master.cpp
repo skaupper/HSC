@@ -49,7 +49,7 @@ void Master::stimuli_process() {
   o_nrst = 1;
   wait(SC_ZERO_TIME);
 
-  run_test_sequence(*this);
+  run_test_sequences(*this);
 
   sc_stop();
 }

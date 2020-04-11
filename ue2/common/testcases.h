@@ -4,13 +4,20 @@
 #include "StopWatch.h"
 #include "parameters.h"
 
-/* Main test sequence */
 template <typename T>
-void run_test_sequence(T &master) {
-  uint32_t wr_data;
-  uint32_t rd_data;
-  srand(time(nullptr));
+static void waitWithOptionalDebugOutput(T &master) {
+#if (ACCUMULATED_WAIT == true)
+  cout << "sc_time_stamp before: " << sc_time_stamp().to_seconds() << endl;
+  cout << "waiting accumulated delay (" << master.mAccumulatedDelay.to_seconds()
+       << " s)" << endl;
+  wait(master.mAccumulatedDelay);
+  cout << "sc_time_stamp after: " << sc_time_stamp().to_seconds() << endl;
+#endif
+}
 
+template <typename T>
+static void write_all_sequence(T &master) {
+  uint32_t wr_data;
   std::cout << "### Perform write on all addresses ###" << std::endl;
 #if (ACCUMULATED_WAIT == true)
   master.mAccumulatedDelay = SC_ZERO_TIME;
@@ -20,15 +27,13 @@ void run_test_sequence(T &master) {
     wr_data = addr * 3;
     master.singleWrite(addr, wr_data);
   }
-#if (ACCUMULATED_WAIT == true)
-  cout << "sc_time_stamp before: " << sc_time_stamp().to_seconds() << endl;
-  cout << "waiting accumulated delay (" << master.mAccumulatedDelay.to_seconds()
-       << " s)" << endl;
-  wait(master.mAccumulatedDelay);
-  cout << "sc_time_stamp after: " << sc_time_stamp().to_seconds() << endl;
-#endif
+  waitWithOptionalDebugOutput(master);
   std::cout << "Took " << stw::Stop() << " seconds.\n" << std::endl;
+}
 
+template <typename T>
+static void read_all_sequence(T &master) {
+  uint32_t rd_data;
   std::cout << "### Perform read on all addresses ###" << std::endl;
 #if (ACCUMULATED_WAIT == true)
   master.mAccumulatedDelay = SC_ZERO_TIME;
@@ -39,15 +44,14 @@ void run_test_sequence(T &master) {
 
     sc_assert(rd_data == addr * 3);
   }
-#if (ACCUMULATED_WAIT == true)
-  cout << "sc_time_stamp before: " << sc_time_stamp().to_seconds() << endl;
-  cout << "waiting accumulated delay (" << master.mAccumulatedDelay.to_seconds()
-       << " s)" << endl;
-  wait(master.mAccumulatedDelay);
-  cout << "sc_time_stamp after: " << sc_time_stamp().to_seconds() << endl;
-#endif
+  waitWithOptionalDebugOutput(master);
   std::cout << "Took " << stw::Stop() << " seconds.\n" << std::endl;
+}
 
+template <typename T>
+static void write_read_random_sequence(T &master) {
+  uint32_t wr_data;
+  uint32_t rd_data;
   std::cout << "### Perform " << NUM_RANDOM_TESTS
             << " write-read-checks on random addresses ###" << std::endl;
 #if (ACCUMULATED_WAIT == true)
@@ -64,14 +68,20 @@ void run_test_sequence(T &master) {
 
     sc_assert(rd_data == wr_data);
   }
-#if (ACCUMULATED_WAIT == true)
-  cout << "sc_time_stamp before: " << sc_time_stamp().to_seconds() << endl;
-  cout << "waiting accumulated delay (" << master.mAccumulatedDelay.to_seconds()
-       << " s)" << endl;
-  wait(master.mAccumulatedDelay);
-  cout << "sc_time_stamp after: " << sc_time_stamp().to_seconds() << endl;
-#endif
+  waitWithOptionalDebugOutput(master);
   std::cout << "Took " << stw::Stop() << " seconds.\n" << std::endl;
+}
+
+/* Main test sequence */
+template <typename T>
+void run_test_sequences(T &master) {
+  srand(time(nullptr));
+
+  write_all_sequence(master);
+
+  read_all_sequence(master);
+
+  write_read_random_sequence(master);
 
   std::cout << "### Test sequence done [ @ simulation time "
             << sc_time_stamp().to_seconds() << " s] ###" << std::endl;
