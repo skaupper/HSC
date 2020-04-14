@@ -1,3 +1,7 @@
 # Ignore object and binary directories
 obj/
 bin/
+
+*.log
+
+.vscode/
