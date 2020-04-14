@@ -33,6 +33,7 @@ void Memory::operate() {
       o_ack = 1;
       wait(i_clk.posedge_event());
       o_ack = 0;
+      o_data = 0;
       wait(SC_ZERO_TIME);
     }
   }

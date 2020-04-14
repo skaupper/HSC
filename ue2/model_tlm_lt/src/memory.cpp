@@ -34,7 +34,7 @@ void Memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay) {
     return;
   }
 
-  if (len > 4 || wid < len) {
+  if (len > 4 || wid != len) {
     trans.set_response_status(tlm::TLM_BURST_ERROR_RESPONSE);
     return;
   }
