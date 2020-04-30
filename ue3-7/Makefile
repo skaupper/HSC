@@ -2,26 +2,42 @@ BIN_NAME=ue37
 
 # Compile and link flags
 DEFINES=
-CPPFLAGS=-Wall -pedantic --std=c++11 -O2 -g $(addprefix -D,$(DEFINES))
+CPPFLAGS=-Wall -pedantic --std=c++17 -O0 -g $(addprefix -D,$(DEFINES))
+CFLAGS=
 LDFLAGS=-lpthread -lsystemc
 
 # Directory constants
 BIN_DIR=bin
-SRC_DIR=src
+SRC_DIRS=src src/firmware src/sim
 OBJ_DIR=obj
+
+SRC_EXTENSIONS=cpp c
 
 # Source and object files
 BINARY=$(BIN_DIR)/$(BIN_NAME)
-SOURCES=$(wildcard $(SRC_DIR)/**/*.cpp)
-OBJECTS=$(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+
+CPP_SOURCES=$(foreach CUR_SRC_DIR,$(SRC_DIRS),$(wildcard $(CUR_SRC_DIR)/*.cpp))
+C_SOURCES=$(foreach CUR_SRC_DIR,$(SRC_DIRS),$(wildcard $(CUR_SRC_DIR)/*.c))
+SOURCES=$(CPP_SOURCES) $(C_SOURCES)
+
+CPP_OBJECTS=$(CPP_SOURCES:%.cpp=%.o)
+C_OBJECTS=$(C_SOURCES:%.c=%.o)
+OBJECTS_NO_PREFIX=$(CPP_OBJECTS) $(C_OBJECTS)
+OBJECTS=$(addprefix $(OBJ_DIR)/,$(OBJECTS_NO_PREFIX))
 
 
 
 # General targets
 all: $(BIN_DIR) $(OBJ_DIR) $(BINARY)
 
-clean:
+print:
+	@echo "Sources:"
 	@echo $(SOURCES)
+	@echo
+	@echo "Objects:"
+	@echo $(OBJECTS)
+
+clean:
 	rm -rf $(OBJ_DIR)
 	rm -rf $(BIN_DIR)
 
@@ -36,10 +52,15 @@ $(BIN_DIR):
 $(BINARY): $(OBJECTS)
 	$(CXX) $^ $(LDFLAGS) -o $@
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@echo $(shell dirname $@)
+$(OBJ_DIR)/%.o: %.cpp
+	@echo "C++: " $<
 	@mkdir -p $(shell dirname $@)
 	$(CXX) -c $< $(CPPFLAGS) -o $@
+
+$(OBJ_DIR)/%.o: %.c
+	@echo "C  : " $<
+	@mkdir -p $(shell dirname $@)
+	$(CC) -c $< $(CFLAGS) -o $@
 
 
 
