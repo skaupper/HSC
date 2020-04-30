@@ -1,3 +1,12 @@
+/*****************************************************************************/
+/**
+ * @file    cordic.cpp
+ * @author  Michael Wurm <michael.wurm@students.fh-hagenberg.at>
+ *          Sebastian Kaupper <sebastian.kaupper@students.fh-hagenberg.at>
+ * @brief   Implementation of Cordic algorithm
+ */
+/*****************************************************************************/
+
 #include "cordic.h"
 #include <cmath>
 

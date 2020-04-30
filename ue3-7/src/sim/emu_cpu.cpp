@@ -48,7 +48,7 @@ static void checkResponseError(tlm::tlm_generic_payload *trans)
 /*----------------------------------------------------------------------------*/
 
 EmuCpu::EmuCpu(sc_module_name module_name, main_func_ptr_t main_entry_point)
-    : sc_module(name), mMainFuncPtr(main_entry_point)
+    : sc_module(module_name), mMainFuncPtr(main_entry_point)
 {
   SC_THREAD(run);
 }
@@ -63,29 +63,25 @@ EmuCpu *EmuCpu::getInstance()
   return mInstance;
 }
 
-EmuCpu *createInstance(char *module_name, main_func_ptr_t main_entry_point)
+EmuCpu *EmuCpu::createInstance(char *module_name, main_func_ptr_t main_entry_point)
 {
+  if (mInstance)
+  {
+    cerr << "EmuCpu::createInstance() was already called once!" << endl;
+    assert(nullptr);
+  }
   mInstance = new EmuCpu(module_name, main_entry_point);
+  return mInstance;
 }
 
-void EmuCpu::read_bus(uint32_t addr, uint32_t *data)
+void EmuCpu::read_bus(uint32_t addr, uint32_t *rd_data)
 {
-  uint32_t rd_data;
-  tlm::tlm_generic_payload *trans = new tlm::tlm_generic_payload();
-
-  trans->set_command(tlm::TLM_READ_COMMAND);
-
-  doTransaction(trans, addr, &rd_data);
+  doTransaction(tlm::TLM_WRITE_COMMAND, addr, rd_data);
 }
 
-void EmuCpu::write_bus(uint32_t addr, uint32_t data)
+void EmuCpu::write_bus(uint32_t addr, uint32_t wr_data)
 {
-  uint32_t wr_data;
-  tlm::tlm_generic_payload *trans = new tlm::tlm_generic_payload();
-
-  trans->set_command(tlm::TLM_WRITE_COMMAND);
-
-  doTransaction(trans, addr, &rd_data);
+  doTransaction(tlm::TLM_WRITE_COMMAND, addr, &wr_data);
 }
 
 void EmuCpu::run()
@@ -97,10 +93,13 @@ void EmuCpu::run()
 
 void EmuCpu::doTransaction(tlm::tlm_command cmd, uint32_t addr, uint32_t *data)
 {
+  tlm::tlm_generic_payload *trans = new tlm::tlm_generic_payload();
   prepareTransactionDefaultParams(trans);
-  trans->set_address(addr);
-  trans->set_data_ptr(reinterpret_cast<unsigned char *>(&rd_data));
 
+  trans->set_address(addr);
+  trans->set_data_ptr(reinterpret_cast<unsigned char *>(&data));
+
+  sc_time delay;
   mSocket->b_transport(*trans, delay);
   checkResponseError(trans);
 

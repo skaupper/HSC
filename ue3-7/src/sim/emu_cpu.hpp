@@ -23,8 +23,8 @@ SC_MODULE(EmuCpu)
   EmuCpu *getInstance();
   EmuCpu *createInstance(char *module_name, main_func_ptr_t main_entry_point);
 
-  void read_bus(uint32_t addr, uint32_t * data);
-  void write_bus(uint32_t addr, uint32_t data);
+  void read_bus(uint32_t addr, uint32_t * rd_data);
+  void write_bus(uint32_t addr, uint32_t wr_data);
 
 private:
   SC_HAS_PROCESS(EmuCpu);

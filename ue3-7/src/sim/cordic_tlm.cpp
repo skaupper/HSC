@@ -8,10 +8,17 @@
 /*****************************************************************************/
 
 #include "cordic_tlm.hpp"
-#include "hal.h"
+#include "../firmware/hal.h"
 
-Cordic_TLM::Cordic_TLM(sc_module_name name) : sc_module(name), mSocket("bus_rw")
+Cordic_TLM::Cordic_TLM(sc_module_name name)
+    : sc_module(name), mSocket("cordic_tlm_rw")
 {
+  mCordicIP = new Cordic("CordicIP");
+
+  // Port binding
+  mCordicIP->iStart(mStart_o);
+  mCordicIP->iPhi(mPhi_o);
+
   // register callbacks for incoming interface method calls
   mSocket.register_b_transport(this, &Cordic_TLM::b_transport);
 }
@@ -21,53 +28,71 @@ Cordic_TLM::Cordic_TLM(sc_module_name name) : sc_module(name), mSocket("bus_rw")
 *********************************************************/
 void Cordic_TLM::b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
 {
-  tlm::tlm_command cmd = trans.get_command();
-  uint64_t addr = trans.get_address();
-  unsigned char *data = trans.get_data_ptr();
-  unsigned int len = trans.get_data_length();
-  unsigned char *byt = trans.get_byte_enable_ptr();
-  unsigned int wid = trans.get_streaming_width();
+  tlm::tlm_command tr_cmd = trans.get_command();
+  uint64_t tr_addr = trans.get_address();
+  unsigned char *tr_data = trans.get_data_ptr();
+  unsigned int tr_len = trans.get_data_length();
+  unsigned char *tr_byte_en = trans.get_byte_enable_ptr();
+  unsigned int tr_s_width = trans.get_streaming_width();
 
   // Decode transaction and check parameters
-  if (addr != OFFSET_CTL &&
-      addr != OFFSET_PHI &&
-      addr != OFFSET_XY)
+  if (tr_addr != OFFSET_CTL &&
+      tr_addr != OFFSET_PHI &&
+      tr_addr != OFFSET_XY)
   {
     trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
-    SC_REPORT_ERROR("TLM-2", "Cordic_TLM: Invalid register address used in read access");
+    SC_REPORT_ERROR("TLM-2", "Cordic_TLM: Invalid register address");
     return;
   }
 
-  if (byt != 0)
+  if (tr_byte_en != 0)
   {
     trans.set_response_status(tlm::TLM_BYTE_ENABLE_ERROR_RESPONSE);
     return;
   }
 
-  if (len > 4 || wid != len)
+  if (tr_len > 4 || tr_s_width != tr_len)
   {
     trans.set_response_status(tlm::TLM_BURST_ERROR_RESPONSE);
     return;
   }
 
-  // read or write data
-  if (cmd == tlm::TLM_READ_COMMAND)
+  // Actual read or write access
+  if (tr_cmd == tlm::TLM_READ_COMMAND)
   {
-  }
-  else if (cmd == tlm::TLM_WRITE_COMMAND)
-  {
-    if (addr == OFFSET_PHI)
+    switch (tr_addr)
     {
-      mCordic.iStart = 1;
-      mCordic.iPhi = *data;
+    case OFFSET_CTL:
+      *tr_data = mCordicIP->oRdy;
+      break;
+    case OFFSET_XY:
+      *tr_data = (x_t)(mCordicIP->oY << 16) & (y_t)mCordicIP->oX;
+      break;
+
+    default:
+      SC_REPORT_ERROR("TLM-2", "Cordic_TLM: Invalid register address used in read access");
+      return;
+      break;
+    }
+  }
+  else if (tr_cmd == tlm::TLM_WRITE_COMMAND)
+  {
+    if (tr_addr == OFFSET_PHI)
+    {
+      mStart_o = true;
+      //mCordicIP->iStart = true;
+
+      // TODO: need to '&' here? or better assert(*tr_data & 0x1FFFFF) (invalid tr_data)?
+      //mCordicIP->iPhi = (*tr_data & 0x1FFFFF);
+      mPhi_o = (*tr_data & 0x1FFFFF);
     }
     else
     {
       SC_REPORT_ERROR("TLM-2", "Cordic_TLM: Invalid register address used in write access");
+      return;
     }
   }
 
-  /* Set DMI hint to indicate that DMI is not supported */
   trans.set_dmi_allowed(false);
   trans.set_response_status(tlm::TLM_OK_RESPONSE);
   delay = sc_time(1, SC_NS);

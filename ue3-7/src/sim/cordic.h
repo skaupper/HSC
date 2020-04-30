@@ -1,3 +1,12 @@
+/*****************************************************************************/
+/**
+ * @file    cordic.hpp
+ * @author  Michael Wurm <michael.wurm@students.fh-hagenberg.at>
+ *          Sebastian Kaupper <sebastian.kaupper@students.fh-hagenberg.at>
+ * @brief   Header of Cordic algorithm
+ */
+/*****************************************************************************/
+
 #ifndef _CORDIC_H
 #define _CORDIC_H
 
