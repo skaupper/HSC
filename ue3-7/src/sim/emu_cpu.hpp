@@ -23,14 +23,17 @@ SC_MODULE(EmuCpu)
   EmuCpu *getInstance();
   EmuCpu *createInstance(char *module_name, main_func_ptr_t main_entry_point);
 
-  void write_bus(uint32_t addr, uint32_t data);
   void read_bus(uint32_t addr, uint32_t * data);
+  void write_bus(uint32_t addr, uint32_t data);
 
 private:
   SC_HAS_PROCESS(EmuCpu);
-
   EmuCpu(sc_module_name module_name, main_func_ptr_t main_entry_point);
   EmuCpu(const EmuCpu &) = delete;
+  EmuCpu &operator=(const EmuCpu &) = delete;
+
+  void run();
+  void doTransaction(tlm::tlm_command cmd, uint32_t addr, uint32_t * data);
 
   EmuCpu *mInstance;
   main_func_ptr_t mMainFuncPtr;
