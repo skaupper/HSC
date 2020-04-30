@@ -3,6 +3,6 @@
 
 #include <stddef.h>
 
-void CordicCalcXY(const float phi, float *const cos, float *const sin, uint32_t *const adr);
+void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const adr);
 
 #endif // _CORDIC_DRV_H_

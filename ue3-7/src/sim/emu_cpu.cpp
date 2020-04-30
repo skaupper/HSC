@@ -9,6 +9,10 @@
 
 #include "emu_cpu.hpp"
 
+#include <stdio.h>
+
+using namespace std;
+
 static void prepareTransactionDefaultParams(tlm::tlm_generic_payload *trans)
 {
   assert(trans);
@@ -51,7 +55,11 @@ EmuCpu::EmuCpu(sc_module_name module_name, main_func_ptr_t main_entry_point)
 
 EmuCpu *EmuCpu::getInstance()
 {
-  assert(mInstance);
+  if (!mInstance)
+  {
+    cerr << "Need to call EmuCpu::createInstance() first!" << endl;
+    assert(nullptr);
+  }
   return mInstance;
 }
 
