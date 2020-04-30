@@ -1,11 +1,20 @@
 #include "cordic_drv.h"
-#include <hal.h>
+#include "hal.h"
+#include <assert.h>
 
 #define PHI_FRACTIONAL_BITS 21
 #define XY_FRACTIONAL_BITS 16
 
-static float cap_to_quadrant1(const float phi, int *const quadrant)
+//
+// Helper functions to handle angles
+//
+static float transform_to_quadrant1(const float phi, int *const quadrant)
 {
+  // This functions tranforms the incoming angle to a representation in the 1st quadrant.
+  // This is not a simple modulus. For example 100° are actually transformed into 180°-100° = 80°.
+  // This way the resulting angles of cosinus and sinus can easier be transformed back to the original quadrant.
+
+  assert(quadrant);
   assert(phi <= M_PI * 2 && phi >= -M_PI * 2);
 
   static const float PI_2 = M_PI / 2;
@@ -17,7 +26,7 @@ static float cap_to_quadrant1(const float phi, int *const quadrant)
     {
       // 90° < phi <= 180°
       *quadrant = 2;
-      transformedPhi = phi - PI_2;
+      transformedPhi = 2 * PI_2 - phi;
     }
     else
     {
@@ -38,11 +47,35 @@ static float cap_to_quadrant1(const float phi, int *const quadrant)
     {
       // -90° <= phi <= 0°
       *quadrant = 4;
-      transformedPhi = phi * -1;
+      transformedPhi = 2 * PI_2 - (phi * -1);
     }
   }
 
   return transformedPhi;
+}
+
+static void transform_to_orig_angle(float *const cos, float *const sin, const int origQuadrant)
+{
+  assert(cos && sin);
+
+  // Due to the transformation used in `transform_to_quadrant1`
+  // the back transformation only alters the sign bits
+  switch (origQuadrant)
+  {
+  case 2:
+    *cos *= -1;
+  case 1:
+    break;
+
+  case 3:
+    *cos *= -1;
+  case 4:
+    *sin *= -1;
+    break;
+
+  default:
+    assert(false);
+  }
 }
 
 static float norm_angle(float phi)
@@ -60,15 +93,20 @@ static float norm_angle(float phi)
   return phi;
 }
 
+//
+// Driver implementation
+//
 void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const adr)
 {
+  assert(cos && sin && adr);
+
   // TODO: This parameter is unused at the moment
   (void)adr;
 
   // Move input angle to the first quadrant
   int origQuadrant = 0;
   phi = norm_angle(phi);
-  phi = cap_to_quadrant1(phi, &origQuadrant);
+  phi = transform_to_quadrant1(phi, &origQuadrant);
 
   // Write the input angle
   uint32_t fixedPhi = (transformedPhi << PHI_FRACTIONAL_BITS);
@@ -90,4 +128,7 @@ void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const
   // Convert angles back to floating point
   *cos = ((float)x) >> XY_FRACTIONAL_BITS;
   *sin = ((float)y) >> XY_FRACTIONAL_BITS;
+
+  // Move angles back to their original quadrants
+  transform_to_orig_angle(cos, sin, origQuadrant);
 }

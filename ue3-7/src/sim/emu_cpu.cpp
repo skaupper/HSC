@@ -1,7 +1,7 @@
 /*****************************************************************************/
 /**
  * @file    emu_cpu.cpp
- * @author  Michael nWurm <michael.wurm@students.fh-hagenberg.at>
+ * @author  Michael Wurm <michael.wurm@students.fh-hagenberg.at>
  *          Sebastian Kaupper <sebastian.kaupper@students.fh-hagenberg.at>
  * @brief   EmuCPU implementation
  */

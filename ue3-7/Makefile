@@ -53,12 +53,10 @@ $(BINARY): $(OBJECTS)
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 $(OBJ_DIR)/%.o: %.cpp
-	@echo "C++: " $<
 	@mkdir -p $(shell dirname $@)
 	$(CXX) -c $< $(CPPFLAGS) -o $@
 
 $(OBJ_DIR)/%.o: %.c
-	@echo "C  : " $<
 	@mkdir -p $(shell dirname $@)
 	$(CC) -c $< $(CFLAGS) -o $@
 
