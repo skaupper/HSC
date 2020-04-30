@@ -63,7 +63,7 @@ EmuCpu *EmuCpu::getInstance()
   return mInstance;
 }
 
-EmuCpu *EmuCpu::createInstance(char *module_name, main_func_ptr_t main_entry_point)
+EmuCpu *EmuCpu::createInstance(char const *module_name, main_func_ptr_t main_entry_point)
 {
   if (mInstance)
   {

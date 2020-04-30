@@ -20,8 +20,8 @@ SC_MODULE(EmuCpu)
   /* initiator socket, with default settings */
   tlm_utils::simple_initiator_socket<EmuCpu> mSocket;
 
-  EmuCpu *getInstance();
-  EmuCpu *createInstance(char *module_name, main_func_ptr_t main_entry_point);
+  static EmuCpu *getInstance();
+  static EmuCpu *createInstance(char const *module_name, main_func_ptr_t main_entry_point);
 
   void read_bus(uint32_t addr, uint32_t * rd_data);
   void write_bus(uint32_t addr, uint32_t wr_data);
@@ -35,7 +35,7 @@ private:
   void run();
   void doTransaction(tlm::tlm_command cmd, uint32_t addr, uint32_t * data);
 
-  EmuCpu *mInstance;
+  static EmuCpu *mInstance;
   main_func_ptr_t mMainFuncPtr;
 };
 

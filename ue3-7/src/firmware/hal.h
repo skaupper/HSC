@@ -1,7 +1,7 @@
 #ifndef _HAL_H_
 #define _HAL_H_
 
-#include <stddef.h>
+#include <stdint.h>
 
 //
 // Offsets of Cordic registers

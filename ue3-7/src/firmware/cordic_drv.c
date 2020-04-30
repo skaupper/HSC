@@ -1,6 +1,8 @@
 #include "cordic_drv.h"
 #include "hal.h"
 #include <assert.h>
+#include <math.h>
+#include <stdbool.h>
 
 #define PHI_FRACTIONAL_BITS 21
 #define XY_FRACTIONAL_BITS 16
@@ -75,6 +77,7 @@ static void transform_to_orig_angle(float *const cos, float *const sin, const in
 
   default:
     assert(false);
+    break;
   }
 }
 
