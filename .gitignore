@@ -1,6 +1,7 @@
 # Ignore object and binary directories
 obj/
 bin/
+lib/
 
 *.log
 

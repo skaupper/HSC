@@ -2,7 +2,7 @@ BIN_NAME=ue37
 
 # Compile and link flags
 DEFINES=
-CPPFLAGS=-Wall -pedantic --std=c++17 -O0 -g $(addprefix -D,$(DEFINES))
+CPPFLAGS=-Wall -Werror -pedantic --std=c++17 -O0 -g $(addprefix -D,$(DEFINES))
 CFLAGS=
 LDFLAGS=-lpthread -lsystemc
 

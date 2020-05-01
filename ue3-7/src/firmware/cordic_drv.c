@@ -2,7 +2,6 @@
 #include "hal.h"
 #include <assert.h>
 #include <math.h>
-#include <stdbool.h>
 
 #define PHI_FRACTIONAL_BITS 21
 #define XY_FRACTIONAL_BITS 16
@@ -76,7 +75,7 @@ static void transform_to_orig_angle(float *const cos, float *const sin, const in
     break;
 
   default:
-    assert(false);
+    assert(0);
     break;
   }
 }
@@ -99,12 +98,12 @@ static float norm_angle(float phi)
 //
 // Driver implementation
 //
-void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const adr)
+void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const addr)
 {
-  assert(cos && sin && adr);
+  assert(cos && sin && addr);
 
-  // TODO: This parameter is unused at the moment
-  (void)adr;
+  // This double cast avoids pointer-to-int warnings
+  uint32_t addrInt = (uint32_t)(uintptr_t)addr;
 
   // Move input angle to the first quadrant
   int origQuadrant = 0;
@@ -112,25 +111,25 @@ void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const
   phi = transform_to_quadrant1(phi, &origQuadrant);
 
   // Write the input angle
-  uint32_t fixedPhi = (transformedPhi << PHI_FRACTIONAL_BITS);
-  CordicWrPhi(fixedPhi, adr);
+  uint32_t fixedPhi = phi * pow(2, PHI_FRACTIONAL_BITS);
+  CordicWrPhi(addrInt, fixedPhi);
 
   // Wait until calculation is finished
   int ready = 0;
   while (!ready)
   {
-    uint32_t reg = CordicRdCtl(adr);
+    uint32_t reg = CordicRdCtl(addrInt);
     ready = (reg & 0x1);
   }
 
   // Extract resulting angles
-  uint32_t result = CordicRdXY(adr);
+  uint32_t result = CordicRdXY(addrInt);
   uint16_t x = ((result >> 0) & 0xffff);
   uint16_t y = ((result >> 16) & 0xffff);
 
   // Convert angles back to floating point
-  *cos = ((float)x) >> XY_FRACTIONAL_BITS;
-  *sin = ((float)y) >> XY_FRACTIONAL_BITS;
+  *cos = ((float)x) / pow(2, XY_FRACTIONAL_BITS);
+  *sin = ((float)y) / pow(2, XY_FRACTIONAL_BITS);
 
   // Move angles back to their original quadrants
   transform_to_orig_angle(cos, sin, origQuadrant);

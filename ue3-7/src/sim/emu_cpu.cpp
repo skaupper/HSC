@@ -13,6 +13,9 @@
 
 using namespace std;
 
+
+EmuCpu *EmuCpu::mInstance;
+
 static void prepareTransactionDefaultParams(tlm::tlm_generic_payload *trans)
 {
   assert(trans);
@@ -104,4 +107,16 @@ void EmuCpu::doTransaction(tlm::tlm_command cmd, uint32_t addr, uint32_t *data)
   checkResponseError(trans);
 
   wait(delay);
+}
+
+/*----------------------------------------------------------------------------*/
+
+extern "C" void read_bus(uint32_t addr, uint32_t *data)
+{
+  EmuCpu::getInstance()->read_bus(addr, data);
+}
+
+extern "C" void write_bus(uint32_t addr, uint32_t data)
+{
+  EmuCpu::getInstance()->write_bus(addr, data);
 }
