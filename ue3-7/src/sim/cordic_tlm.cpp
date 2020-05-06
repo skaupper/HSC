@@ -10,6 +10,14 @@
 #include "cordic_tlm.hpp"
 #include "../firmware/hal.h"
 
+static uint32_t toUint32(x_t angle)
+{
+  size_t fracBits = angle.wl() - angle.iwl();
+  double tmpAngle = angle.to_double();
+  uint32_t res = tmpAngle * pow(2, fracBits);
+  return res;
+}
+
 Cordic_TLM::Cordic_TLM(sc_module_name name)
     : sc_module(name), mSocket("cordic_tlm_rw")
 {
@@ -18,6 +26,9 @@ Cordic_TLM::Cordic_TLM(sc_module_name name)
   // Port binding
   mCordicIP->iStart(mStart_o);
   mCordicIP->iPhi(mPhi_o);
+  mCordicIP->oRdy(mRdy_i);
+  mCordicIP->oX(mX_i);
+  mCordicIP->oY(mY_i);
 
   // register callbacks for incoming interface method calls
   mSocket.register_b_transport(this, &Cordic_TLM::b_transport);
@@ -60,31 +71,40 @@ void Cordic_TLM::b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
   // Actual read or write access
   if (tr_cmd == tlm::TLM_READ_COMMAND)
   {
+    uint32_t result;
+    uint32_t x;
+    uint32_t y;
+
     switch (tr_addr)
     {
     case OFFSET_CTL:
-      *tr_data = mCordicIP->oRdy;
+      result = mCordicIP->oRdy;
+      memcpy(tr_data, &result, tr_len);
       break;
     case OFFSET_XY:
-      *tr_data = (x_t)(mCordicIP->oY << 16) & (y_t)mCordicIP->oX;
+      x = toUint32(mCordicIP->oX.read());
+      y = toUint32(mCordicIP->oY.read());
+      result = (y << 16) | x;
+      memcpy(tr_data, &result, tr_len);
       break;
 
     default:
       SC_REPORT_ERROR("TLM-2", "Cordic_TLM: Invalid register address used in read access");
       return;
-      break;
     }
+
+    mStart_o = false;
   }
   else if (tr_cmd == tlm::TLM_WRITE_COMMAND)
   {
     if (tr_addr == OFFSET_PHI)
     {
-      mStart_o = true;
-      //mCordicIP->iStart = true;
+      uint32_t rawPhi;
+      memcpy(&rawPhi, tr_data, tr_len);
+      double phi = ((double)(rawPhi & 0x1FFFFF)) * pow(2, -21);
+      mPhi_o = phi;
 
-      // TODO: need to '&' here? or better assert(*tr_data & 0x1FFFFF) (invalid tr_data)?
-      //mCordicIP->iPhi = (*tr_data & 0x1FFFFF);
-      mPhi_o = (*tr_data & 0x1FFFFF);
+      mStart_o = true;
     }
     else
     {

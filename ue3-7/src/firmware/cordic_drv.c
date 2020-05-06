@@ -21,7 +21,7 @@ static float transform_to_quadrant1(const float phi, int *const quadrant)
   static const float PI_2 = M_PI / 2;
   float transformedPhi = phi;
 
-  if (phi > 0)
+  if (phi >= 0)
   {
     if (phi > PI_2)
     {
@@ -100,7 +100,7 @@ static float norm_angle(float phi)
 //
 void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const addr)
 {
-  assert(cos && sin && addr);
+  assert(cos && sin);
 
   // This double cast avoids pointer-to-int warnings
   uint32_t addrInt = (uint32_t)(uintptr_t)addr;

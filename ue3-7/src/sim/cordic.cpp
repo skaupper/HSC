@@ -23,10 +23,14 @@ void Cordic::calc()
   // static const int ITERATIONS = 18;
   static const int ITERATIONS = 16;
 
+  oRdy.write(1);
+
   while (true)
   {
-    oRdy.write(0);
     wait(iStart.posedge_event());
+    oRdy.write(0);
+    wait(SC_ZERO_TIME);
+
     cout << "## Start Cordic Calculation @ " << sc_time_stamp() << endl;
 
     phi_t phi = iPhi.read();
@@ -55,7 +59,6 @@ void Cordic::calc()
     oY.write(y * K);
 
     oRdy.write(1);
-    wait(SC_ZERO_TIME);
   }
 }
 

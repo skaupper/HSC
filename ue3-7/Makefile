@@ -2,8 +2,10 @@ BIN_NAME=ue37
 
 # Compile and link flags
 DEFINES=
-CPPFLAGS=-Wall -Werror -pedantic --std=c++17 -O0 -g $(addprefix -D,$(DEFINES))
-CFLAGS=
+CPPDEFINES=$(DEFINES)
+CDEFINES=$(DEFINES)
+CPPFLAGS=-Wall -Werror -pedantic --std=c++11 -O0 -g $(addprefix -D,$(CPPDEFINES))
+CFLAGS=-Wall -Werror -pedantic --std=gnu11 -O0 -g $(addprefix -D,$(CDEFINES))
 LDFLAGS=-lpthread -lsystemc
 
 # Directory constants

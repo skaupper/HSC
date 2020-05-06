@@ -29,8 +29,11 @@ private:
   Cordic *mCordicIP;
 
   /* Signal interface ("wires") to Cordic IP */
-  sc_out<bool> mStart_o;
-  sc_out<phi_t> mPhi_o;
+  sc_signal<bool> mRdy_i;
+  sc_signal<x_t> mX_i;
+  sc_signal<y_t> mY_i;
+  sc_signal<bool> mStart_o;
+  sc_signal<phi_t> mPhi_o;
 };
 
 #endif /* _CORDIC_TLM_H */

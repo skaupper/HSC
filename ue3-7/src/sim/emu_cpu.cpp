@@ -79,7 +79,7 @@ EmuCpu *EmuCpu::createInstance(char const *module_name, main_func_ptr_t main_ent
 
 void EmuCpu::read_bus(uint32_t addr, uint32_t *rd_data)
 {
-  doTransaction(tlm::TLM_WRITE_COMMAND, addr, rd_data);
+  doTransaction(tlm::TLM_READ_COMMAND, addr, rd_data);
 }
 
 void EmuCpu::write_bus(uint32_t addr, uint32_t wr_data)
@@ -99,8 +99,9 @@ void EmuCpu::doTransaction(tlm::tlm_command cmd, uint32_t addr, uint32_t *data)
   tlm::tlm_generic_payload *trans = new tlm::tlm_generic_payload();
   prepareTransactionDefaultParams(trans);
 
+  trans->set_command(cmd);
   trans->set_address(addr);
-  trans->set_data_ptr(reinterpret_cast<unsigned char *>(&data));
+  trans->set_data_ptr(reinterpret_cast<unsigned char *>(data));
 
   sc_time delay;
   mSocket->b_transport(*trans, delay);
