@@ -25,15 +25,15 @@ SC_MODULE(Cordic_TLM)
 
   virtual void b_transport(tlm::tlm_generic_payload & trans, sc_time & delay);
 
-private:
-  Cordic *mCordicIP;
-
   /* Signal interface ("wires") to Cordic IP */
   sc_signal<bool> mRdy_i;
   sc_signal<xy_t> mX_i;
   sc_signal<xy_t> mY_i;
   sc_signal<bool> mStart_o;
   sc_signal<phi_t> mPhi_o;
+
+private:
+  Cordic *mCordicIP;
 };
 
 #endif /* _CORDIC_TLM_H */
