@@ -27,7 +27,7 @@ static float transform_to_quadrant1(const float phi, int *const quadrant)
     {
       // 90° < phi <= 180°
       *quadrant = 2;
-      transformedPhi = 2 * PI_2 - phi;
+      transformedPhi = M_PI - phi;
     }
     else
     {
@@ -38,17 +38,17 @@ static float transform_to_quadrant1(const float phi, int *const quadrant)
   }
   else
   {
-    if (phi < PI_2)
+    if (phi < -PI_2)
     {
       // -180° <= phi < -90°
       *quadrant = 3;
-      transformedPhi = (phi * -1) - PI_2;
+      transformedPhi = phi + M_PI;
     }
     else
     {
       // -90° <= phi <= 0°
       *quadrant = 4;
-      transformedPhi = 2 * PI_2 - (phi * -1);
+      transformedPhi = (phi * -1);
     }
   }
 

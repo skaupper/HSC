@@ -10,14 +10,6 @@
 #include "cordic_tlm.hpp"
 #include "../firmware/hal.h"
 
-static uint32_t toUint32(x_t angle)
-{
-  size_t fracBits = angle.wl() - angle.iwl();
-  double tmpAngle = angle.to_double();
-  uint32_t res = tmpAngle * pow(2, fracBits);
-  return res;
-}
-
 Cordic_TLM::Cordic_TLM(sc_module_name name)
     : sc_module(name), mSocket("cordic_tlm_rw")
 {
@@ -78,12 +70,13 @@ void Cordic_TLM::b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
     switch (tr_addr)
     {
     case OFFSET_CTL:
-      result = mCordicIP->oRdy;
+      result = mRdy_i;
       memcpy(tr_data, &result, tr_len);
       break;
+
     case OFFSET_XY:
-      x = toUint32(mCordicIP->oX.read());
-      y = toUint32(mCordicIP->oY.read());
+      x = mX_i * pow(2, XY_FRAC_BITS);
+      y = mY_i * pow(2, XY_FRAC_BITS);
       result = (y << 16) | x;
       memcpy(tr_data, &result, tr_len);
       break;
@@ -99,11 +92,15 @@ void Cordic_TLM::b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
   {
     if (tr_addr == OFFSET_PHI)
     {
+      // Read phi from input memory
       uint32_t rawPhi;
       memcpy(&rawPhi, tr_data, tr_len);
-      double phi = ((double)(rawPhi & 0x1FFFFF)) * pow(2, -21);
-      mPhi_o = phi;
+      rawPhi = (rawPhi & ((1 << PHI_WL)-1));
 
+      // Convert interger representation back to a double and eventually into sc_ufixed
+      double phi = ((double)rawPhi) * pow(2, -PHI_FRAC_BITS);
+
+      mPhi_o = phi;
       mStart_o = true;
     }
     else

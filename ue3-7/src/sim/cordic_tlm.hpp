@@ -30,8 +30,8 @@ private:
 
   /* Signal interface ("wires") to Cordic IP */
   sc_signal<bool> mRdy_i;
-  sc_signal<x_t> mX_i;
-  sc_signal<y_t> mY_i;
+  sc_signal<xy_t> mX_i;
+  sc_signal<xy_t> mY_i;
   sc_signal<bool> mStart_o;
   sc_signal<phi_t> mPhi_o;
 };
