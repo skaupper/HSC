@@ -78,9 +78,9 @@
 //
 
 int LIS2DS12_Init(void);
-u16 LIS2DS12_GetX(void);
-u16 LIS2DS12_GetY(void);
-u16 LIS2DS12_GetZ(void);
+s16 LIS2DS12_GetX(void);
+s16 LIS2DS12_GetY(void);
+s16 LIS2DS12_GetZ(void);
 int LIS2DS12_GetTemp(void);
 
 

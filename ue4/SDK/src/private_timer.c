@@ -140,9 +140,11 @@ void PrivateTimer_SetIntHandler(Xil_ExceptionHandler handler)
 }
 
 
+
 void PrivateTimer_SetFrequency(u16 hz)
 {
+  // See also: https://developer.arm.com/docs/ddi0407/f/global-timer-private-timers-and-watchdog-registers/about-the-private-timer-and-watchdog-blocks/calculating-timer-intervals
   u8 prescaler = XScuTimer_GetPrescaler(&timer);
-  u32 neededReloadValue = (TICKS_PER_SECOND)/(hz*prescaler);
+  u32 neededReloadValue = (TICKS_PER_SECOND)/(hz*(prescaler+1)) - 1;
   PrivateTimer_SetReloadValue(neededReloadValue);
 }

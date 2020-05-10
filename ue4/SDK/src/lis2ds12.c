@@ -10,9 +10,16 @@
 #include "lis2ds12.h"
 
 
+static const int FULL_SCALE = 2000; // milli g
+
 static u8 iicDeviceAddress = 0x00;
 
 
+static int rawAccToMilliG(s16 rawAcc)
+{
+  int accValue = (((int)rawAcc) * FULL_SCALE) / (1 << (16-1));
+  return accValue;
+}
 
 int LIS2DS12_Init(void)
 {
@@ -61,7 +68,8 @@ int LIS2DS12_Init(void)
 
   // Turn on the accelerometer.
   //    14-bit mode, ODR = 400 Hz, FS = 2g
-  send_byte = 0x60;
+  //    Block data update = 1
+  send_byte = 0x61;
   bytes = LIS2DS12_WriteReg(LIS2DS12_ACC_CTRL1, &send_byte, 1);
   if (bytes == 0) {
     return XST_FAILURE;
@@ -78,48 +86,44 @@ int LIS2DS12_Init(void)
   return XST_SUCCESS;
 }
 
-u16 LIS2DS12_GetX(void)
+
+s16 LIS2DS12_GetX(void)
 {
   u8 lsb, msb;
   LIS2DS12_ReadReg(LIS2DS12_ACC_OUT_X_L, &lsb, 1);
   LIS2DS12_ReadReg(LIS2DS12_ACC_OUT_X_H, &msb, 1);
-  return (((u16)msb) << 8) + lsb;
+  return rawAccToMilliG((((u16)msb) << 8) + lsb);
 }
 
-u16 LIS2DS12_GetY(void)
+s16 LIS2DS12_GetY(void)
 {
   u8 lsb, msb;
   LIS2DS12_ReadReg(LIS2DS12_ACC_OUT_Y_L, &lsb, 1);
   LIS2DS12_ReadReg(LIS2DS12_ACC_OUT_Y_H, &msb, 1);
-  return (((u16)msb) << 8) + lsb;
+  return rawAccToMilliG((((u16)msb) << 8) + lsb);
 }
 
-u16 LIS2DS12_GetZ(void)
+s16 LIS2DS12_GetZ(void)
 {
   u8 lsb, msb;
   LIS2DS12_ReadReg(LIS2DS12_ACC_OUT_Z_L, &lsb, 1);
   LIS2DS12_ReadReg(LIS2DS12_ACC_OUT_Z_H, &msb, 1);
-  return (((u16)msb) << 8) + lsb;
+  return rawAccToMilliG((((u16)msb) << 8) + lsb);
 }
 
 int LIS2DS12_GetTemp(void)
 {
   static const int TEMP_OFFSET = 25;
 
-  u8 uRawTemp;
-  s8 sRawTemp;
+  u8 rawTemp;
   unsigned int bytes;
 
-  bytes = LIS2DS12_ReadReg(LIS2DS12_ACC_OUT_T, &uRawTemp, 1);
+  bytes = LIS2DS12_ReadReg(LIS2DS12_ACC_OUT_T, &rawTemp, 1);
   if (bytes != 1) {
     return 0;
   }
 
-  // Copy unsigned temperature bitwise into the signed temperature
-  // The temperature value returned from the sensor is signed!
-  memcpy(&sRawTemp, &uRawTemp, 1);
-
-  return ((int)sRawTemp) + TEMP_OFFSET;
+  return ((int)rawTemp) + TEMP_OFFSET;
 }
 
 
