@@ -1,7 +1,14 @@
 # Ignore object and binary directories
 obj/
 bin/
+lib/
 
 *.log
 
 .vscode/
+
+
+
+# TODO: refine this ignore
+Vivado/
+SDK/
