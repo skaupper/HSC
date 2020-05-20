@@ -5,8 +5,8 @@
 # Description : Runs synthesis, implementation and creates bitstream for project
 ################################################################################
 
-set proj_name "MinizedBasicSystem"
-set design_name "basic_system"
+set proj_name "BasicSystem"
+set design_name "basic_design"
 
 set parallel_jobs 4
 
