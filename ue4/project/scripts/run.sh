@@ -16,7 +16,7 @@ cd $SCRIPT_PATH
 VIVADO_BATCH="vivado -mode batch -nolog -nojournal -notrace"
 VIVADO_PROJECT_NAME="basic_system"
 
-PROJ_DIR="$SCRIPT_PATH/../../$VIVADO_PROJECT_NAME"
+PROJ_DIR="$SCRIPT_PATH/../$VIVADO_PROJECT_NAME"
 ARTIFACTS_DIR="$PROJ_DIR/artifacts"
 
 if [ "$ARG" == "project" ]; then
@@ -24,17 +24,10 @@ if [ "$ARG" == "project" ]; then
   exit 0
 elif [ "$ARG" == "synth" ]; then
   $VIVADO_BATCH -source synth.tcl
-
-  #  echo "--- - Extracting Vivado artifacts"
-  #  mkdir -p $ARTIFACTS_DIR
-
-  #  echo "Copying files into artifacts."
-  #  mv $PROJ_DIR/${VIVADO_PROJECT_NAME}.runs/impl_1/${VIVADO_PROJECT_NAME}_wrapper.bit $ARTIFACTS_DIR
-  #  mv $PROJ_DIR/${VIVADO_PROJECT_NAME}.sdk/${VIVADO_PROJECT_NAME}_wrapper.hdf $ARTIFACTS_DIR
   exit 0
 elif [ "$ARG" == "sdk" ]; then
   xsdk -batch -source open_sdk.tcl
-  xsdk -workspace $PROJ_DIR/sdk #-eclipseargs -perspective org.eclipse.cdt.ui.CPerspective
+  xsdk -workspace ../sdk #-eclipseargs -perspective org.eclipse.cdt.ui.CPerspective
   exit 0
 elif [ "$ARG" == "format" ]; then
   folders_to_lint="../sdk/src ../sdk/standalone_bsp_0_Passthrough_A53_1"
