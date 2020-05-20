@@ -7,11 +7,22 @@
  */
 /*****************************************************************************/
 
-#ifndef _CORDIC_H
-#define _CORDIC_H
+#ifndef _CORDIC_HPP_
+#define _CORDIC_HPP_
 
-#define SC_INCLUDE_FX // for fixed-point data types (like sc_ufixed)
+#ifndef SC_INCLUDE_FX
+# define SC_INCLUDE_FX // for fixed-point data types (like sc_ufixed)
+#endif
+
 #include <systemc.h>
+
+#include "constants.hpp"
+
+
+
+// 18 iterations to use the maximum resolution of the interface (max. error = 2^-16)
+// static const int ITERATIONS = 18;
+constexpr int ITERATIONS = 16;
 
 
 constexpr uint8_t PHI_FRAC_BITS = 21;
@@ -30,18 +41,4 @@ typedef sc_ufixed<PHI_WL, PHI_IWL, SC_RND, SC_SAT> phi_t;
 typedef sc_ufixed<XY_WL, XY_IWL, SC_RND, SC_SAT> xy_t;
 
 
-SC_MODULE(Cordic)
-{
-    sc_in<bool> iStart;
-    sc_out<bool> oRdy;
-    sc_in<phi_t> iPhi;
-    sc_out<xy_t> oX;
-    sc_out<xy_t> oY;
-
-    SC_CTOR(Cordic);
-
-private:
-    void calc();
-};
-
-#endif /* _CORDIC_H */
+#endif /* _CORDIC_HPP_ */

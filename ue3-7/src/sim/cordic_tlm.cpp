@@ -11,25 +11,130 @@
 #include "../firmware/hal.h"
 
 Cordic_TLM::Cordic_TLM(sc_module_name name)
-    : sc_module(name), mSocket("cordic_tlm_rw")
+    : sc_module(name), mSocket("cordic_tlm_rw"),
+      mClk("clk", CLK_PERIOD_NS, SC_NS)
 {
-  mCordicIP = new Cordic("CordicIP");
+  mCordicBhvIP = new CordicBhv("CordicBhvIP");
+  mCordicCcIP = new CordicCc("CordicCcIP");
+
+  mnRst = 0;
+  SC_THREAD(generateReset);
+
+
+  // Configure trace file
+  tf = sc_create_vcd_trace_file("trace");
+  tf->delta_cycles(true);
+  sc_trace(tf, mCcStart, "cordicCc.iStart");
+  sc_trace(tf, mCcRdy, "cordicCc.oRdy");
+  sc_trace(tf, mCcPhi, "cordicCc.iPhi");
+  sc_trace(tf, mCcX, "cordicCc.oX");
+  sc_trace(tf, mCcY, "cordicCc.oY");
+
 
   // Port binding
-  mCordicIP->iStart(mStart_o);
-  mCordicIP->iPhi(mPhi_o);
-  mCordicIP->oRdy(mRdy_i);
-  mCordicIP->oX(mX_i);
-  mCordicIP->oY(mY_i);
+  mCordicBhvIP->iStart(mStart);
+  mCordicBhvIP->iPhi(mPhi);
+  mCordicBhvIP->oRdy(mBhvRdy);
+  mCordicBhvIP->oX(mBhvX);
+  mCordicBhvIP->oY(mBhvY);
+
+  mCordicCcIP->iClk(mClk);
+  mCordicCcIP->inRst(mnRst);
+  mCordicCcIP->iStart(mStart);
+  mCordicCcIP->iPhi(mPhi);
+  mCordicCcIP->oRdy(mCcRdy);
+  mCordicCcIP->oX(mCcX);
+  mCordicCcIP->oY(mCcY);
+
 
   // register callbacks for incoming interface method calls
   mSocket.register_b_transport(this, &Cordic_TLM::b_transport);
 }
 
+Cordic_TLM::~Cordic_TLM()
+{
+  delete mCordicBhvIP;
+  delete mCordicCcIP;
+}
+
+
+void Cordic_TLM::generateReset()
+{
+  wait(RESET_DURATION_NS, SC_NS);
+  mnRst = 1;
+}
+
+
+
+
 /*********************************************************
   TLM 2 blocking transport method
 *********************************************************/
 void Cordic_TLM::b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
+{
+  constexpr double EPSILON = std::pow(2, -14);
+
+  static bool bhvStarted = false;
+  static bool ccStarted = false;
+
+  // Before handling the transaction, combine outputs from both models
+  // and do some checks
+  double bhvX = mBhvX.read();
+  double bhvY = mBhvY.read();
+  double ccX = mCcX.read();
+  double ccY = mCcY.read();
+
+
+
+  bool bhvRdy = mBhvRdy.read();
+  bool ccRdy = mCcRdy.read();
+
+  if (!bhvRdy) {
+    bhvStarted = true;
+  }
+  if (!ccRdy) {
+    ccStarted = true;
+  }
+
+
+  bool rdy = (bhvRdy && ccRdy) && (bhvStarted && ccStarted);
+  mRdy.write(rdy);
+
+  if (rdy) {
+    if (std::abs(bhvX - ccX) > EPSILON) {
+      sc_assertion_failed("The difference in X violates is greater than epsilon", __FILE__, __LINE__);
+    }
+    if (std::abs(bhvY - ccY) > EPSILON) {
+      sc_assertion_failed("The difference in Y violates is greater than epsilon", __FILE__, __LINE__);
+    }
+
+    mX.write(bhvX);
+    mY.write(bhvY);
+  }
+
+
+  //
+  // Handle actual transaction
+  //
+  _b_transport(trans, delay);
+
+
+  // Forward inputs to both models equally
+  if (mStart) {
+    bhvStarted = false;
+    ccStarted = false;
+  }
+
+  mBhvStart.write(mStart);
+  mCcStart.write(mStart);
+
+  mBhvPhi.write(mPhi);
+  mCcPhi.write(mPhi);
+}
+
+
+
+void Cordic_TLM::_b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
 {
   tlm::tlm_command tr_cmd = trans.get_command();
   uint64_t tr_addr = trans.get_address();
@@ -70,13 +175,17 @@ void Cordic_TLM::b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
     switch (tr_addr)
     {
     case OFFSET_CTL:
-      result = mRdy_i;
+      if (mRdy) {
+        mStart = false;
+      }
+
+      result = mRdy;
       memcpy(tr_data, &result, tr_len);
       break;
 
     case OFFSET_XY:
-      x = mX_i * pow(2, XY_FRAC_BITS);
-      y = mY_i * pow(2, XY_FRAC_BITS);
+      x = mX * pow(2, XY_FRAC_BITS);
+      y = mY * pow(2, XY_FRAC_BITS);
       result = (y << 16) | x;
       memcpy(tr_data, &result, tr_len);
       break;
@@ -85,8 +194,6 @@ void Cordic_TLM::b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
       SC_REPORT_ERROR("TLM-2", "Cordic_TLM: Invalid register address used in read access");
       return;
     }
-
-    mStart_o = false;
   }
   else if (tr_cmd == tlm::TLM_WRITE_COMMAND)
   {
@@ -100,8 +207,8 @@ void Cordic_TLM::b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
       // Convert interger representation back to a double and eventually into sc_ufixed
       double phi = ((double)rawPhi) * pow(2, -PHI_FRAC_BITS);
 
-      mPhi_o = phi;
-      mStart_o = true;
+      mPhi = phi;
+      mStart = true;
     }
     else
     {

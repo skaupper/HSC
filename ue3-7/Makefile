@@ -2,7 +2,7 @@ BIN_NAME=ue37
 
 # Compile and link flags
 DEFINES=
-CPPDEFINES=$(DEFINES)
+CPPDEFINES=$(DEFINES) SC_INCLUDE_FX
 CDEFINES=$(DEFINES)
 CPPFLAGS=-Wall -Werror -pedantic --std=c++11 -O0 -g $(addprefix -D,$(CPPDEFINES))
 CFLAGS=-Wall -Werror -pedantic --std=gnu11 -O0 -g $(addprefix -D,$(CDEFINES))

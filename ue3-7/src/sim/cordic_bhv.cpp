@@ -1,28 +1,24 @@
 /*****************************************************************************/
 /**
- * @file    cordic.cpp
+ * @file    cordic_bhv.cpp
  * @author  Michael Wurm <michael.wurm@students.fh-hagenberg.at>
  *          Sebastian Kaupper <sebastian.kaupper@students.fh-hagenberg.at>
- * @brief   Implementation of Cordic algorithm
+ * @brief   Implementation of a behavioural model of the Cordic algorithm
  */
 /*****************************************************************************/
 
-#include "cordic.h"
+#include "cordic_bhv.hpp"
 #include <cmath>
 
 using namespace std;
 
-Cordic::Cordic(sc_module_name name) : sc_module(name)
+CordicBhv::CordicBhv(sc_module_name name) : sc_module(name)
 {
   SC_THREAD(calc);
 }
 
-void Cordic::calc()
+void CordicBhv::calc()
 {
-  // 18 iterations to use the maximum resolution of the interface (max. error = 2^-16)
-  // static const int ITERATIONS = 18;
-  static const int ITERATIONS = 16;
-
   oRdy.write(1);
 
   while (true)
@@ -61,21 +57,3 @@ void Cordic::calc()
     oRdy.write(1);
   }
 }
-
-// void Cordic::calc()
-// {
-//   while (true)
-//   {
-//     oRdy.write(0);
-//     wait(iStart.posedge_event());
-//     cout << "## Start Cordic Calculation @ " << sc_time_stamp() << endl;
-//
-//     phi_t phi = iPhi.read();
-//
-//     oX.write(cos(phi.to_double()));
-//     oY.write(sin(phi.to_double()));
-//
-//     oRdy.write(1);
-//     wait(0, SC_NS);
-//   }
-// }
