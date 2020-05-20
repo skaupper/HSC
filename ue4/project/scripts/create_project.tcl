@@ -143,11 +143,11 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 # Add local files from the original project (-no_copy_sources specified)
-set files [list \
- [file normalize "${origin_dir}/MinizedBasicSystem.srcs/sources_1/bd/basic_system/basic_system.bd" ]\
- [file normalize "${origin_dir}/MinizedBasicSystem.srcs/sources_1/bd/basic_system/hdl/basic_system_wrapper.v" ]\
-]
-set added_files [add_files -fileset sources_1 $files]
+#set files [list \
+# [file normalize "${origin_dir}/MinizedBasicSystem.srcs/sources_1/bd/basic_system/basic_system.bd" ]\
+# [file normalize "${origin_dir}/MinizedBasicSystem.srcs/sources_1/bd/basic_system/hdl/basic_system_wrapper.v" ]\
+#]
+#set added_files [add_files -fileset sources_1 $files]
 
 # Set 'sources_1' fileset file properties for remote files
 # None
@@ -171,7 +171,7 @@ if {[string equal [get_filesets -quiet constrs_1] ""]} {
 set obj [get_filesets constrs_1]
 
 # Add/Import constrs file and set constrs file properties
-set file "[file normalize "$origin_dir/MinizedBasicSystem.srcs/constrs_1/new/io_port_constraints.xdc"]"
+set file "[file normalize "$origin_dir/../src/constraints/io_port_constraints.xdc"]"
 set file_added [add_files -norecurse -fileset $obj [list $file]]
 set file "new/io_port_constraints.xdc"
 set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
