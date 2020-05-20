@@ -29,7 +29,7 @@ SC_MODULE(Cordic_TLM)
 
 private:
   void generateReset();
-  void _b_transport(tlm::tlm_generic_payload & trans, sc_time & delay);
+  void combineAndCheckSignals();
 
 
   sc_trace_file *tf;
@@ -57,6 +57,10 @@ private:
   sc_signal<xy_t> mY;
   sc_signal<bool> mStart;
   sc_signal<phi_t> mPhi;
+
+
+  // Internal signal
+  sc_signal<bool> mStartCalculations;
 
 
   CordicBhv *mCordicBhvIP;

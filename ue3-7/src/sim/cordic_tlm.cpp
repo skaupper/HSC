@@ -20,6 +20,11 @@ Cordic_TLM::Cordic_TLM(sc_module_name name)
   mnRst = 0;
   SC_THREAD(generateReset);
 
+  SC_METHOD(combineAndCheckSignals);
+  sensitive << mBhvRdy << mBhvX << mBhvY
+            << mCcRdy  << mCcX  << mCcY
+            << mStart  << mPhi  << mStartCalculations;
+
 
   // Configure trace file
   tf = sc_create_vcd_trace_file("trace");
@@ -32,16 +37,16 @@ Cordic_TLM::Cordic_TLM(sc_module_name name)
 
 
   // Port binding
-  mCordicBhvIP->iStart(mStart);
-  mCordicBhvIP->iPhi(mPhi);
+  mCordicBhvIP->iStart(mBhvStart);
+  mCordicBhvIP->iPhi(mBhvPhi);
   mCordicBhvIP->oRdy(mBhvRdy);
   mCordicBhvIP->oX(mBhvX);
   mCordicBhvIP->oY(mBhvY);
 
   mCordicCcIP->iClk(mClk);
   mCordicCcIP->inRst(mnRst);
-  mCordicCcIP->iStart(mStart);
-  mCordicCcIP->iPhi(mPhi);
+  mCordicCcIP->iStart(mCcStart);
+  mCordicCcIP->iPhi(mCcPhi);
   mCordicCcIP->oRdy(mCcRdy);
   mCordicCcIP->oX(mCcX);
   mCordicCcIP->oY(mCcY);
@@ -64,6 +69,55 @@ void Cordic_TLM::generateReset()
   mnRst = 1;
 }
 
+void Cordic_TLM::combineAndCheckSignals()
+{
+  constexpr double EPSILON = std::pow(2, -14);
+
+  static bool bhvFinished = false;
+  static bool ccFinished = false;
+
+  if (mBhvRdy.posedge()) {
+    mBhvStart = false;
+    bhvFinished = true;
+  }
+
+  if (mCcRdy.posedge()) {
+    mCcStart = false;
+    ccFinished = true;
+  }
+
+  if (mStartCalculations.posedge() || mStartCalculations.negedge()) {
+    bhvFinished = false;
+    ccFinished = false;
+
+    mBhvStart = true;
+    mCcStart = true;
+    mStart = true;
+  }
+
+  mRdy = bhvFinished && ccFinished;
+
+  if (bhvFinished && ccFinished) {
+    double x = mBhvX.read();
+    double y = mBhvY.read();
+
+    if (std::abs(mBhvX - mCcX) > EPSILON) {
+      sc_assertion_failed("The difference in X violates is greater than epsilon", __FILE__, __LINE__);
+    }
+    if (std::abs(mBhvY - mCcY) > EPSILON) {
+      sc_assertion_failed("The difference in Y violates is greater than epsilon", __FILE__, __LINE__);
+    }
+
+    mX.write(x);
+    mY.write(y);
+
+    mStart = false;
+  }
+
+  mBhvPhi = mPhi;
+  mCcPhi = mPhi;
+}
+
 
 
 
@@ -71,70 +125,6 @@ void Cordic_TLM::generateReset()
   TLM 2 blocking transport method
 *********************************************************/
 void Cordic_TLM::b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
-{
-  constexpr double EPSILON = std::pow(2, -14);
-
-  static bool bhvStarted = false;
-  static bool ccStarted = false;
-
-  // Before handling the transaction, combine outputs from both models
-  // and do some checks
-  double bhvX = mBhvX.read();
-  double bhvY = mBhvY.read();
-  double ccX = mCcX.read();
-  double ccY = mCcY.read();
-
-
-
-  bool bhvRdy = mBhvRdy.read();
-  bool ccRdy = mCcRdy.read();
-
-  if (!bhvRdy) {
-    bhvStarted = true;
-  }
-  if (!ccRdy) {
-    ccStarted = true;
-  }
-
-
-  bool rdy = (bhvRdy && ccRdy) && (bhvStarted && ccStarted);
-  mRdy.write(rdy);
-
-  if (rdy) {
-    if (std::abs(bhvX - ccX) > EPSILON) {
-      sc_assertion_failed("The difference in X violates is greater than epsilon", __FILE__, __LINE__);
-    }
-    if (std::abs(bhvY - ccY) > EPSILON) {
-      sc_assertion_failed("The difference in Y violates is greater than epsilon", __FILE__, __LINE__);
-    }
-
-    mX.write(bhvX);
-    mY.write(bhvY);
-  }
-
-
-  //
-  // Handle actual transaction
-  //
-  _b_transport(trans, delay);
-
-
-  // Forward inputs to both models equally
-  if (mStart) {
-    bhvStarted = false;
-    ccStarted = false;
-  }
-
-  mBhvStart.write(mStart);
-  mCcStart.write(mStart);
-
-  mBhvPhi.write(mPhi);
-  mCcPhi.write(mPhi);
-}
-
-
-
-void Cordic_TLM::_b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
 {
   tlm::tlm_command tr_cmd = trans.get_command();
   uint64_t tr_addr = trans.get_address();
@@ -175,10 +165,6 @@ void Cordic_TLM::_b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
     switch (tr_addr)
     {
     case OFFSET_CTL:
-      if (mRdy) {
-        mStart = false;
-      }
-
       result = mRdy;
       memcpy(tr_data, &result, tr_len);
       break;
@@ -208,7 +194,7 @@ void Cordic_TLM::_b_transport(tlm::tlm_generic_payload &trans, sc_time &delay)
       double phi = ((double)rawPhi) * pow(2, -PHI_FRAC_BITS);
 
       mPhi = phi;
-      mStart = true;
+      mStartCalculations = !mStartCalculations;
     }
     else
     {

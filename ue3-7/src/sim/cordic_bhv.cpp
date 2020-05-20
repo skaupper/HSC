@@ -27,7 +27,7 @@ void CordicBhv::calc()
     oRdy.write(0);
     wait(SC_ZERO_TIME);
 
-    cout << "## Start Cordic Calculation @ " << sc_time_stamp() << endl;
+    // cout << "## Start Cordic Calculation @ " << sc_time_stamp() << endl;
 
     phi_t phi = iPhi.read();
     double K = 1;
