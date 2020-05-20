@@ -102,7 +102,7 @@ set orig_proj_dir "[file normalize "$origin_dir/"]"
 
 # Create project
 file mkdir ../output
-create_project -force ${_xil_proj_name_} ../output/${_xil_proj_name_} -part xc7z007sclg225-1
+create_project -force ${_xil_proj_name_} ../output -part xc7z007sclg225-1
 
 # Set the directory path for the new project
 set proj_dir [get_property directory [current_project]]
