@@ -17,7 +17,7 @@ set cache_dir $project_dir/ip_cache
 if {[catch {
   open_project $project_dir/$proj_name.xpr
 } ]} {
-  puts "(VideoSigXilinx) ERROR: Couldn't open project."
+  puts "### ERROR: Couldn't open project."
   exit 1
 }
 
@@ -27,7 +27,7 @@ if {[catch {
   config_ip_cache -use_cache_location $cache_dir
   update_ip_catalog
 } ]} {
-  puts "(VideoSigXilinx) ERROR: Failed to set IP cache directory."
+  puts "### ERROR: Failed to set IP cache directory."
   exit 1
 }
 
@@ -57,8 +57,8 @@ if {[catch {
       while {[gets $fp line] >= 0} {
         incr line_ctr
         if {[string match -nocase {*ERROR:*} $line]} {
-          puts "(VideoSigXilinx) An error occured in file '$runme_log_file', line $line_ctr."
-          puts "(VideoSigXilinx) The error reads: $line"
+          puts "### An error occured in file '$runme_log_file', line $line_ctr."
+          puts "### The error reads: $line"
           close $fp
           exit 1
         }
@@ -67,7 +67,7 @@ if {[catch {
     }
   }
 } ]} {
-  puts "(VideoSigXilinx) ERROR: Synthesis failed."
+  puts "### ERROR: Synthesis failed."
   exit 1
 }
 
@@ -91,11 +91,11 @@ if {[catch {
   wait_on_run impl_1
 
   if {[get_property PROGRESS [get_runs impl_1]] != "100%"} {
-    puts "(VideoSigXilinx) ERROR: Implementation returned with progress lower than 100%."
+    puts "### ERROR: Implementation returned with progress lower than 100%."
     exit 1
   }
 } ]} {
-  puts "(VideoSigXilinx) ERROR: Implementation failed."
+  puts "### ERROR: Implementation failed."
   exit 1
 }
 
@@ -105,7 +105,7 @@ if {[catch {
   launch_runs impl_1 -to_step write_bitstream -jobs $parallel_jobs
   wait_on_run impl_1
 } ]} {
-  puts "(VideoSigXilinx) ERROR: Bitstream generation failed."
+  puts "### ERROR: Bitstream generation failed."
   exit 1
 }
 
@@ -116,5 +116,5 @@ set impl_dir $project_dir/${proj_name}.runs/impl_1
 file mkdir $sdk_dir
 file copy -force $impl_dir/${design_name}_wrapper.sysdef $sdk_dir/${design_name}_wrapper.hdf
 
-puts "(VideoSigXilinx) Done."
+puts "### Done."
 exit 0

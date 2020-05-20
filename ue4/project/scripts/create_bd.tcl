@@ -14,4 +14,4 @@ source $origin_dir/../src/bd/$_xil_proj_name_.tcl
 set design_name [get_bd_designs]
 make_wrapper -files [get_files $design_name.bd] -top -import
 
-puts "(VideoSigXilinx) Block design created."
+puts "### Block design created."
