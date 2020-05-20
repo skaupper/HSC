@@ -8,6 +8,7 @@
 set origin_dir [file dirname [info script]]
 set workspace_dir [file normalize "${origin_dir}/../sdk"]
 
+set hw_name basic_design_wrapper_hw_platform_0
 set bsp_name standalone_bsp_0
 set app_name app
 
@@ -16,9 +17,15 @@ puts "### Opening SDK..."
 setws $workspace_dir
 puts "### Set workspace to '[getws]'."
 
-importprojects $workspace_dir/basic_design_wrapper_hw_platform_0
-importprojects $workspace_dir/$bsp_name
+createhw -name $hw_name -hwspec $workspace_dir/basic_design_wrapper.hdf
+createbsp -name $bsp_name -hwproject $hw_name -proc ps7_cortexa9_0 -os standalone
+configbsp -bsp $bsp_name stdin ps7_uart_1
+configbsp -bsp $bsp_name stdout ps7_uart_1
+updatemss -mss $workspace_dir/$bsp_name/system.mss
+regenbsp -bsp $bsp_name
 importprojects $workspace_dir/$app_name
+
+projects -build
 
 # NOTE: The following command could probably be replaced with
 #       'createlib' in the future (library project).
