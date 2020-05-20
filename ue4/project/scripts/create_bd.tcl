@@ -1,6 +1,7 @@
 ################################################################################
 # File        : create_bd.tcl
-# Author      : Michael Wurm <wurm.michael95@gmail.com>
+# Author      : Michael Wurm <michael.wurm@students.fh-hagenberg.at>
+#               Sebastian Kaupper <sebastian.kaupper@students.fh-hagenberg.at>
 # Description : Creates block design *.bd
 ################################################################################
 
