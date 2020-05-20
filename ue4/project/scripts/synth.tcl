@@ -110,7 +110,7 @@ if {[catch {
 }
 
 puts "--- - Exporting HDF file."
-set sdk_dir $project_dir/${proj_name}.sdk
+set sdk_dir ../sdk
 set impl_dir $project_dir/${proj_name}.runs/impl_1
 
 file mkdir $sdk_dir
