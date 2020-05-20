@@ -16,3 +16,5 @@ RemoteSystemsTempFiles
 **/Debug/
 **/Release/
 **/webtalk/
+
+.sdk/

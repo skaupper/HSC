@@ -83,7 +83,10 @@ int main()
   s16 x, y, z;
 
   while(1) {
-    msleep(2000);
+    msleep(250);
+    set_PS_LED_color(LED_COLOR_AMBER);
+    msleep(250);
+    set_PS_LED_color(LED_COLOR_OFF);
 
     x = LIS2DS12_GetX();
     y = LIS2DS12_GetY();
