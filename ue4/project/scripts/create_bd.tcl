@@ -7,7 +7,7 @@
 puts "--- - Creating block design"
 
 # Create block design
-source $origin_dir/../src/bd/$proj_name.tcl
+source $origin_dir/../src/bd/$_xil_proj_name_.tcl
 
 # Generate the wrapper
 set design_name [get_bd_designs]

@@ -6,13 +6,15 @@
 ################################################################################
 
 ## Vivado temporary files
+output/
+.Xil/
+
 #*.jou
 #*.log
 #*.str
 #*.xpr
 #
 ## Vivado temporary files (build and synth)
-#*.Xil
 #*.cache
 #*.hw
 #*.ip_user_files
