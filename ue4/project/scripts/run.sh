@@ -25,16 +25,12 @@ if [ "$ARG" == "project" ]; then
 elif [ "$ARG" == "synth" ]; then
   $VIVADO_BATCH -source synth.tcl
 
-  echo "--- - Extracting Vivado artifacts"
-  mkdir -p $ARTIFACTS_DIR
+  #  echo "--- - Extracting Vivado artifacts"
+  #  mkdir -p $ARTIFACTS_DIR
 
-  echo "Creating HDF file."
-  mkdir -p $PROJ_DIR/${VIVADO_PROJECT_NAME}.sdk
-  cp -f $PROJ_DIR/${VIVADO_PROJECT_NAME}.runs/impl_1/${VIVADO_PROJECT_NAME}_wrapper.sysdef $PROJ_DIR/${VIVADO_PROJECT_NAME}.sdk/${VIVADO_PROJECT_NAME}_wrapper.hdf
-
-  echo "Copying files into artifacts."
-  mv $PROJ_DIR/${VIVADO_PROJECT_NAME}.runs/impl_1/${VIVADO_PROJECT_NAME}_wrapper.bit $ARTIFACTS_DIR
-  mv $PROJ_DIR/${VIVADO_PROJECT_NAME}.sdk/${VIVADO_PROJECT_NAME}_wrapper.hdf $ARTIFACTS_DIR
+  #  echo "Copying files into artifacts."
+  #  mv $PROJ_DIR/${VIVADO_PROJECT_NAME}.runs/impl_1/${VIVADO_PROJECT_NAME}_wrapper.bit $ARTIFACTS_DIR
+  #  mv $PROJ_DIR/${VIVADO_PROJECT_NAME}.sdk/${VIVADO_PROJECT_NAME}_wrapper.hdf $ARTIFACTS_DIR
   exit 0
 elif [ "$ARG" == "sdk" ]; then
   xsdk -batch -source open_sdk.tcl
