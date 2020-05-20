@@ -4,10 +4,6 @@
 # Description : Local SDK gitignore file
 ################################################################################
 
-# Ignore, because they are imported on each build
-# by the open_sdk.tcl (command importsources).
-standalone_bsp_0_Passthrough_A53_1/src/video_switch_app.*
-
 **/*.o
 **/*.d
 **/*.a
