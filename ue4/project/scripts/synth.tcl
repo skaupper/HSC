@@ -113,7 +113,7 @@ puts "--- - Exporting HDF file."
 set sdk_dir $project_dir/${proj_name}.sdk
 set impl_dir $project_dir/${proj_name}.runs/impl_1
 
-file mkdir -p $sdk_dir
+file mkdir $sdk_dir
 file copy -force $impl_dir/${design_name}_wrapper.sysdef $sdk_dir/${design_name}_wrapper.hdf
 
 puts "(VideoSigXilinx) Done."

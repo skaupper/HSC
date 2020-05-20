@@ -175,7 +175,7 @@ set obj [get_filesets sim_1]
 
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
-set_property -name "top" -value "basic_system_wrapper" -objects $obj
+set_property -name "top" -value "${design_name}_wrapper" -objects $obj
 set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 
 set obj [get_runs impl_1]
