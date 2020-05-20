@@ -101,7 +101,8 @@ if { $::argc > 0 } {
 set orig_proj_dir "[file normalize "$origin_dir/"]"
 
 # Create project
-create_project ${_xil_proj_name_} ./${_xil_proj_name_} -part xc7z007sclg225-1
+file mkdir ../output
+create_project -force ${_xil_proj_name_} ../output/${_xil_proj_name_} -part xc7z007sclg225-1
 
 # Set the directory path for the new project
 set proj_dir [get_property directory [current_project]]
@@ -152,9 +153,9 @@ set added_files [add_files -fileset sources_1 $files]
 # None
 
 # Set 'sources_1' fileset file properties for local files
-set file "basic_system/basic_system.bd"
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "registered_with_manager" -value "1" -objects $file_obj
+#set file "basic_system/basic_system.bd"
+#set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+#set_property -name "registered_with_manager" -value "1" -objects $file_obj
 
 
 # Set 'sources_1' fileset properties
@@ -491,3 +492,5 @@ move_dashboard_gadget -name {drc_1} -row 2 -col 0
 move_dashboard_gadget -name {timing_1} -row 0 -col 1
 move_dashboard_gadget -name {utilization_2} -row 1 -col 1
 move_dashboard_gadget -name {methodology_1} -row 2 -col 1
+
+source $origin_dir/create_bd.tcl
