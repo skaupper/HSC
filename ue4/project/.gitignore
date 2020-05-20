@@ -1,0 +1,40 @@
+################################################################################
+# File        : .gitignore
+# Author      : Michael Wurm <michael.wurm@students.fh-hagenberg.at>
+#               Sebastian Kaupper <sebastian.kaupper@students.fh-hagenberg.at>
+# Description : Local gitignore file for Vivado project
+################################################################################
+
+## Vivado temporary files
+output/
+.Xil/
+
+#*.jou
+#*.log
+#*.str
+#*.xpr
+#
+## Vivado temporary files (build and synth)
+#*.cache
+#*.hw
+#*.ip_user_files
+#*.runs
+#*.sdk
+#*.sim
+#*.srcs
+#
+#sdk/**/*.o
+#sdk/**/*.d
+#sdk/**/*.a
+#sdk/.metadata
+#sdk/RemoteSystemsTempFiles
+#sdk/**/Debug/
+#sdk/**/Release/
+#sdk/**/webtalk/
+#
+## Files to keep
+#!**/*/*.bit
+#
+## Other
+#artifacts/
+#

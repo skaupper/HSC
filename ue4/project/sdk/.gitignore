@@ -1,0 +1,20 @@
+################################################################################
+# File        : .gitignore
+# Author      : Michael Wurm <wurm.michael95@gmail.com>
+# Description : Local SDK gitignore file
+################################################################################
+
+**/*.o
+**/*.d
+**/*.a
+.metadata
+RemoteSystemsTempFiles
+**/Debug/
+**/Release/
+**/webtalk/
+
+.sdk/
+
+# Ignore HW and BSP, since they are re-generated every time
+basic_design_wrapper_hw_platform_0/
+standalone_bsp_0/
