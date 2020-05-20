@@ -10,12 +10,8 @@ set design_name "basic_system"
 
 set parallel_jobs 4
 
-#set checkpoint_dir /var/lib/buildkite-agent/builds/checkpoints
 set project_dir ../output
 set cache_dir $project_dir/ip_cache
-
-#set dcp_hash_to_load none
-#set dcp_path $checkpoint_dir/$design_name-$dcp_hash_to_load.dcp
 
 # Open project
 if {[catch {
@@ -90,13 +86,6 @@ if {[catch {
       set_property IS_ENABLED false [get_report_config -of_object [get_runs impl_1] $rpt]
   }
 
-  # Use an incremental checkpoint (if available)
-  # if {$dcp_hash_to_load != "none" && [file exists $dcp_path]} {
-  #   set_property incremental_checkpoint $dcp_path [get_runs impl_1]
-  # } else {
-  #   puts "(VideoSigXilinx) INFO: Design checkpoint was not found at '$dcp_path'."
-  # }
-
   # Launch implementation
   launch_runs impl_1 -jobs $parallel_jobs
   wait_on_run impl_1
@@ -109,18 +98,6 @@ if {[catch {
   puts "(VideoSigXilinx) ERROR: Implementation failed."
   exit 1
 }
-
-#if {[catch {
-#  puts "--- - Write incremental checkpoint"
-#  set git_hash [exec git log -1 --pretty=%h]
-#
-#  open_run impl_1
-#  file mkdir $checkpoint_dir
-#  write_checkpoint -force -incremental_synth $checkpoint_dir/$design_name-$git_hash.dcp
-#} ]} {
-#  puts "(VideoSigXilinx) ERROR: Writing checkpoint failed."
-#  exit 1
-#}
 
 if {[catch {
   puts "--- - Creating bitstream"
