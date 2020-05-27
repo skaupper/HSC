@@ -23,7 +23,7 @@ Cordic_TLM::Cordic_TLM(sc_module_name name)
 
 
     // Configure trace file
-    tf = sc_create_vcd_trace_file("trace");
+    tf = sc_create_vcd_trace_file("bin/trace");
     tf->delta_cycles(true);
     sc_trace(tf, mCcStart, "cordicCc.iStart");
     sc_trace(tf, mCcRdy, "cordicCc.oRdy");
