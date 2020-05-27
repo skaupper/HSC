@@ -8,6 +8,7 @@
 /*****************************************************************************/
 
 #include "emu_cpu.hpp"
+#include "constants.hpp"
 
 #include <stdio.h>
 
@@ -89,6 +90,8 @@ void EmuCpu::write_bus(uint32_t addr, uint32_t wr_data)
 
 void EmuCpu::run()
 {
+  wait(RESET_DURATION_NS+1, SC_NS);
+
   mMainFuncPtr();
 
   sc_stop();

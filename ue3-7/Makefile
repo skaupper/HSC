@@ -2,7 +2,7 @@ BIN_NAME=ue37
 
 # Compile and link flags
 DEFINES=
-CPPDEFINES=$(DEFINES)
+CPPDEFINES=$(DEFINES) SC_INCLUDE_FX
 CDEFINES=$(DEFINES)
 CPPFLAGS=-Wall -Werror -pedantic --std=c++11 -O0 -g $(addprefix -D,$(CPPDEFINES))
 CFLAGS=-Wall -Werror -pedantic --std=gnu11 -O0 -g $(addprefix -D,$(CDEFINES))
@@ -12,8 +12,6 @@ LDFLAGS=-lpthread -lsystemc
 BIN_DIR=bin
 SRC_DIRS=src src/firmware src/sim
 OBJ_DIR=obj
-
-SRC_EXTENSIONS=cpp c
 
 # Source and object files
 BINARY=$(BIN_DIR)/$(BIN_NAME)
@@ -27,6 +25,8 @@ C_OBJECTS=$(C_SOURCES:%.c=%.o)
 OBJECTS_NO_PREFIX=$(CPP_OBJECTS) $(C_OBJECTS)
 OBJECTS=$(addprefix $(OBJ_DIR)/,$(OBJECTS_NO_PREFIX))
 
+C_DEPS=$(addprefix $(OBJ_DIR)/,$(C_OBJECTS:%.o=%.d))
+CPP_DEPS=$(addprefix $(OBJ_DIR)/,$(CPP_OBJECTS:%.o=%.d))
 
 
 # General targets
@@ -38,6 +38,9 @@ print:
 	@echo
 	@echo "Objects:"
 	@echo $(OBJECTS)
+	@echo
+	@echo "C++ Deps:"
+	@echo $(CPP_DEPS)
 
 clean:
 	rm -rf $(OBJ_DIR)
@@ -54,13 +57,15 @@ $(BIN_DIR):
 $(BINARY): $(OBJECTS)
 	$(CXX) $^ $(LDFLAGS) -o $@
 
+-include $(CPP_DEPS)
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(shell dirname $@)
-	$(CXX) -c $< $(CPPFLAGS) -o $@
+	$(CXX) -c $< $(CPPFLAGS) -MMD -o $@
 
+-include $(C_DEPS)
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(shell dirname $@)
-	$(CC) -c $< $(CFLAGS) -o $@
+	$(CC) -c $< $(CFLAGS) -MMD -o $@
 
 
 
