@@ -80,6 +80,7 @@ void CordicCc::calc() {
     xy_calc_t x;
     xy_calc_t x_tmp;
     xy_calc_t y;
+    xy_calc_t y_tmp;
     z_calc_t z;
     int d;
 
@@ -122,9 +123,10 @@ void CordicCc::calc() {
         }
 
         z     = z - d * customAtan(currentIter);
-        x_tmp = x - y * d * pow(2, -currentIter);
-        y     = y + x * d * pow(2, -currentIter);
-        x     = x_tmp;
+        x_tmp = (y * d) >> currentIter;
+        y_tmp = (x * d) >> currentIter;
+        x     = x - x_tmp;
+        y     = y + y_tmp;
 
 
         // Check if the calculation ended
