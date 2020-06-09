@@ -10,7 +10,7 @@ LDFLAGS=-lpthread -lsystemc
 
 # Directory constants
 BIN_DIR=bin
-SRC_DIRS=src src/firmware src/sim
+SRC_DIRS=src src/firmware src/sim src/firmware/driver_stubs
 OBJ_DIR=obj
 
 # Source and object files

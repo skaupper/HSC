@@ -14,7 +14,7 @@
 #include <tlm_utils/simple_initiator_socket.h>
 
 typedef int (*main_func_ptr_t)();
-typedef int (*isr_func_ptr_t)();
+typedef void (*isr_func_ptr_t)(void*);
 
 SC_MODULE(EmuCpu)
 {

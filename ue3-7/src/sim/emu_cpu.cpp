@@ -57,7 +57,7 @@ EmuCpu::EmuCpu(sc_module_name module_name, main_func_ptr_t main_entry_point)
   SC_THREAD(run);
 
   SC_METHOD(ISR);
-  sensitive << iIrq;
+  sensitive << iIrq.posedge();
 }
 
 EmuCpu *EmuCpu::getInstance()

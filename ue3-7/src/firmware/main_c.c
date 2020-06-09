@@ -13,6 +13,12 @@ int main_c()
   float cos;
   float sin;
 
+  int success = cordic_init();
+  if (success == FAIL)
+  {
+    printf("Initialization of Cordic core in cordic_init() failed!");
+    return -1;
+  }
 
   for (float angle = START_ANGLE; angle < END_ANGLE; angle += ANGLE_INCR)
   {
