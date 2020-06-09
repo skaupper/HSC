@@ -133,7 +133,7 @@ CordicStatus_t CordicCalcXY(float phi, float *const cos, float *const sin, uint3
   // TODO: fix race condition...
   while (!rdy_irq) {
 #ifdef EMUCPU
-    wait();
+    Wait();
 #endif
   }
   rdy_irq = 0;

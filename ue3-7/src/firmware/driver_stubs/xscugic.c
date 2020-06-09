@@ -1,6 +1,8 @@
 #include "xscugic.h"
 
 #include "xparameter.h"
+#include "hal.h"
+
 
 void XScuGic_InterruptHandler(XScuGic *inst)
 {
@@ -14,5 +16,6 @@ void XScuGic_Enable(XScuGic *inst, u16 irqId)
 
 int XScuGic_Connect(XScuGic *inst, u16 irqId, Xil_ExceptionHandler irqHandler, void *state)
 {
+    CordicSetISRCallback(irqHandler);
     return XST_SUCCESS;
 }

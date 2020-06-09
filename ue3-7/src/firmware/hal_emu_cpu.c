@@ -8,6 +8,7 @@
 extern void write_bus(uint32_t addr, uint32_t data);
 extern void read_bus(uint32_t addr, uint32_t *data);
 extern void setIsrCallback(void (*isr_func)(void*));
+extern void wait();
 
 uint32_t CordicRdCtl(uint32_t addr)
 {
@@ -31,4 +32,10 @@ uint32_t CordicRdXY(uint32_t addr)
 void CordicSetISRCallback(void (*isr_func)(void*))
 {
   setIsrCallback(isr_func);
+}
+
+
+void Wait()
+{
+  wait();
 }

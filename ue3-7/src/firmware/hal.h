@@ -16,5 +16,8 @@
 uint32_t CordicRdCtl(uint32_t addr);
 void CordicWrPhi(uint32_t addr, uint32_t data);
 uint32_t CordicRdXY(uint32_t addr);
+void CordicSetISRCallback(void (*isr_func)(void*));
+
+void Wait();
 
 #endif // _HAL_H_
