@@ -13,11 +13,11 @@ int main_c()
   float cos;
   float sin;
 
+
   for (float angle = START_ANGLE; angle < END_ANGLE; angle += ANGLE_INCR)
   {
     CordicCalcXY(angle, &cos, &sin, CORDIC_BASE_ADDRESS);
     printf("Phi: %2.3f; Cos: %1.4f; Sin: %1.4f\n", angle, cos, sin);
-    // printf("%2.5f, %1.5f, %1.5f\n", angle, cos, sin);
   }
 
   return 0;

@@ -3,6 +3,13 @@
 
 #include <stdint.h>
 
+typedef enum
+{
+  FAIL = -1,
+  OK = 0
+} CordicStatus_t;
+
+CordicStatus_t cordic_init();
 void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const adr);
 
 #endif // _CORDIC_DRV_H_

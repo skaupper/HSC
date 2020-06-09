@@ -134,3 +134,21 @@ void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const
   // Move angles back to their original quadrants
   transform_to_orig_angle(cos, sin, origQuadrant);
 }
+
+int CordicISRHandler()
+{
+  // do ISR stuff
+  return 0;
+}
+
+CordicStatus_t cordic_init()
+{
+  CordicStatus_t result;
+
+  // call XCordic_Initialize here
+
+  // Setup interrupt handling here
+  CordicSetISRCallback(CordicISRHandler);
+
+  return result;
+}

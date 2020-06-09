@@ -142,3 +142,8 @@ extern "C" void write_bus(uint32_t addr, uint32_t data)
 {
   EmuCpu::getInstance()->write_bus(addr, data);
 }
+
+extern "C" void setIsrCallback(isr_func_ptr_t isr_func)
+{
+  EmuCpu::getInstance()->setIsrCallback(isr_func);
+}
