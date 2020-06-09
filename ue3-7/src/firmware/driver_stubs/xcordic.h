@@ -1,16 +1,12 @@
 #ifndef _XCORDIC_H_
 #define _XCORDIC_H_
 
-#include <stdint.h>
+#include "types.h"
 
 
 //
 // Typedefs
 //
-
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
 
 typedef struct {
     u8 IsReady;

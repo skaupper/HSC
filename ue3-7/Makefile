@@ -4,8 +4,8 @@ BIN_NAME=ue37
 DEFINES=
 CPPDEFINES=$(DEFINES) SC_INCLUDE_FX
 CDEFINES=$(DEFINES)
-CPPFLAGS=-Wall -Werror -pedantic --std=c++11 -O0 -g $(addprefix -D,$(CPPDEFINES))
-CFLAGS=-Wall -Werror -pedantic --std=gnu11 -O0 -g $(addprefix -D,$(CDEFINES))
+CPPFLAGS=-Wall -Werror -pedantic --std=c++11 -O0 -g $(addprefix -D,$(CPPDEFINES)) -Isrc/firmware/driver_stubs
+CFLAGS=-Wall -Werror -pedantic --std=gnu11 -O0 -g $(addprefix -D,$(CDEFINES)) -Isrc/firmware/driver_stubs
 LDFLAGS=-lpthread -lsystemc
 
 # Directory constants

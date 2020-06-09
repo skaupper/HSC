@@ -1,6 +1,5 @@
 #include "hal.h"
 
-#include "emu_cpu.hpp" // for isr_func_ptr_t
 
 //
 // Write and Read fuction to communicatie with the EmuCPU
@@ -8,7 +7,7 @@
 //
 extern void write_bus(uint32_t addr, uint32_t data);
 extern void read_bus(uint32_t addr, uint32_t *data);
-extern void setIsrCallback(isr_func_ptr_t isr_func);
+extern void setIsrCallback(void (*isr_func)(void*));
 
 uint32_t CordicRdCtl(uint32_t addr)
 {
@@ -29,7 +28,7 @@ uint32_t CordicRdXY(uint32_t addr)
   return data;
 }
 
-void CordicSetISRCallback(isr_func_ptr_t isr_func)
+void CordicSetISRCallback(void (*isr_func)(void*))
 {
   setIsrCallback(isr_func);
 }

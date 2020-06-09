@@ -34,7 +34,7 @@ int XScuGic_Initialize(XScuGic *InstancePtr, u16 DeviceId)
     return (XST_DEVICE_NOT_FOUND);
   }
 
-  return XScuGic_CfgInitialize(InstancePtr, ConfigPtr);
+  return XScuGic_CfgInitialize(InstancePtr, ConfigPtr, 0);
 }
 
 int XScuGic_CfgInitialize(XScuGic *InstancePtr, XScuGic_Config *ConfigPtr, u64 CpuBaseAddress)

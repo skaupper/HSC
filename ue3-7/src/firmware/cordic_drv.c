@@ -200,7 +200,7 @@ CordicStatus_t cordic_init()
   XScuGic_Enable(&xscugic_inst, CORDIC_INTR_ID);
 
   // Enable the interrupts of the timer
-  XCordic_EnableInterrupt(&xcordic_inst);
+  XCordic_InterruptEnable(&xcordic_inst);
 
   // Enable interrupts for the processor
   Xil_ExceptionEnable();

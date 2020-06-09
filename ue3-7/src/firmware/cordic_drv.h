@@ -10,6 +10,6 @@ typedef enum
 } CordicStatus_t;
 
 CordicStatus_t cordic_init();
-void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const adr);
+CordicStatus_t CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const adr);
 
 #endif // _CORDIC_DRV_H_

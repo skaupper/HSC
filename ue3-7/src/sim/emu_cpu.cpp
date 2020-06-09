@@ -57,7 +57,7 @@ EmuCpu::EmuCpu(sc_module_name module_name, main_func_ptr_t main_entry_point)
   SC_THREAD(run);
 
   SC_METHOD(ISR);
-  sensitive << iIrq.posedge();
+  sensitive << iIrq.posedge_event();
 }
 
 EmuCpu *EmuCpu::getInstance()
@@ -98,12 +98,12 @@ void EmuCpu::write_bus(uint32_t addr, uint32_t wr_data)
 
 void EmuCpu::ISR()
 {
-  if(mIsrFunc == null)
+  if(mIsrFunc == NULL)
   {
     cerr << "EmuCpu::ISR() was called, before the ISR callback was set!" << endl;
     assert(nullptr);
   }
-  mIsrFunc();
+  mIsrFunc(NULL);
 }
 
 void EmuCpu::run()

@@ -29,6 +29,8 @@ SC_MODULE(EmuCpu)
   void read_bus(uint32_t addr, uint32_t * rd_data);
   void write_bus(uint32_t addr, uint32_t wr_data);
 
+  sc_in<bool> iIrq;
+
 private:
   SC_HAS_PROCESS(EmuCpu);
   EmuCpu(sc_module_name module_name, main_func_ptr_t main_entry_point);
@@ -38,8 +40,6 @@ private:
   void run();
   void ISR();
   void doTransaction(tlm::tlm_command cmd, uint32_t addr, uint32_t * data);
-
-  sc_in<bool> iIrq;
 
   static EmuCpu *mInstance;
   main_func_ptr_t mMainFuncPtr;

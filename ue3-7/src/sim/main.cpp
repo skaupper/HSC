@@ -14,6 +14,7 @@ int sc_main(int argc, char *argv[])
 
   // Connect CPU with peripherals
   cpu->mSocket.bind(cordicTlm.mSocket);
+  cpu->iIrq(cordicTlm.oIrq);
 
   // Start simulation (sc_stop is called when the CPU application is finished)
   sc_start();

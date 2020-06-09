@@ -153,8 +153,7 @@ void Cordic_TLM::b_transport(tlm::tlm_generic_payload &trans, sc_time &delay) {
         switch (tr_addr) {
         case OFFSET_CTL:
             result = mRdy;
-            memcpy(tr_da
-            oIrq = bhvFinished && ccFinished;ta, &result, tr_len);
+            memcpy(tr_data, &result, tr_len);
             break;
 
         case OFFSET_XY:
