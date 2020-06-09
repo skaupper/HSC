@@ -1,16 +1,16 @@
 BIN_NAME=ue37
 
 # Compile and link flags
-DEFINES=
+DEFINES=EMUCPU
 CPPDEFINES=$(DEFINES) SC_INCLUDE_FX
 CDEFINES=$(DEFINES)
-CPPFLAGS=-Wall -Werror -pedantic --std=c++11 -O0 -g $(addprefix -D,$(CPPDEFINES))
-CFLAGS=-Wall -Werror -pedantic --std=gnu11 -O0 -g $(addprefix -D,$(CDEFINES))
+CPPFLAGS=-Wall -Werror -pedantic --std=c++11 -O0 -g $(addprefix -D,$(CPPDEFINES)) -Isrc/firmware/driver_stubs -Isrc/firmware
+CFLAGS=-Wall -pedantic --std=gnu11 -O0 -g $(addprefix -D,$(CDEFINES)) -Isrc/firmware/driver_stubs -I./src/firmware
 LDFLAGS=-lpthread -lsystemc
 
 # Directory constants
 BIN_DIR=bin
-SRC_DIRS=src src/firmware src/sim
+SRC_DIRS=src src/firmware src/sim src/firmware/driver_stubs
 OBJ_DIR=obj
 
 # Source and object files

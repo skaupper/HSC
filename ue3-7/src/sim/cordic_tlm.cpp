@@ -92,6 +92,7 @@ void Cordic_TLM::combineAndCheckSignals() {
 
     // The whole calculation is finished when both IPs finished their calculations.
     mRdy = bhvFinished && ccFinished;
+    oIrq = bhvFinished && ccFinished;
 
     if (bhvFinished && ccFinished) {
         double x = mBhvX.read();

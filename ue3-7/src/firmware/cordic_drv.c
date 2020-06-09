@@ -3,8 +3,21 @@
 #include <assert.h>
 #include <math.h>
 
+#include "xparameter.h"
+#include "xexception.h"
+#include "xscugic.h"
+#include "xcordic.h"
+
+
 #define PHI_FRACTIONAL_BITS 21
 #define XY_FRACTIONAL_BITS 16
+
+
+static XScuGic xscugic_inst;
+static XCordic xcordic_inst;
+
+static u8 rdy_irq = 0;
+
 
 //
 // Helper functions to handle angles
@@ -98,9 +111,11 @@ static float norm_angle(float phi)
 //
 // Driver implementation
 //
-void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const addr)
+CordicStatus_t CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const addr)
 {
-  assert(cos && sin);
+  if (!cos || !sin) {
+    return FAIL;
+  }
 
   // This double cast avoids pointer-to-int warnings
   uint32_t addrInt = (uint32_t)(uintptr_t)addr;
@@ -115,12 +130,13 @@ void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const
   CordicWrPhi(addrInt, fixedPhi);
 
   // Wait until calculation is finished
-  int ready = 0;
-  while (!ready)
-  {
-    uint32_t reg = CordicRdCtl(addrInt);
-    ready = (reg & 0x1);
+  // TODO: fix race condition...
+  while (!rdy_irq) {
+#ifdef EMUCPU
+    Wait();
+#endif
   }
+  rdy_irq = 0;
 
   // Extract resulting angles
   uint32_t result = CordicRdXY(addrInt);
@@ -133,4 +149,61 @@ void CordicCalcXY(float phi, float *const cos, float *const sin, uint32_t *const
 
   // Move angles back to their original quadrants
   transform_to_orig_angle(cos, sin, origQuadrant);
+
+  return OK;
+}
+
+void CordicISRHandler(void *_)
+{
+  rdy_irq = 1;
+}
+
+CordicStatus_t cordic_init()
+{
+  int status;
+
+  int success = XCordic_Initialize(&xcordic_inst, CORDIC_DEVICE_ID);
+  if (success != XST_SUCCESS)
+    return FAIL;
+
+
+  //
+  // Setup interrupt handling here
+  //
+
+  // Query the interrupt controller configuration entry
+  status = XScuGic_Initialize(&xscugic_inst, INTC_DEVICE_ID);
+  if (status != XST_SUCCESS) {
+    return XST_FAILURE;
+  }
+
+  // Initialize the exception handling of the CPU
+  Xil_ExceptionInit();
+
+  // Register an universal exception handler for all interrupts.
+  // The interrupt controller will further forward interrupts.
+  Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_IRQ_INT,
+      (Xil_ExceptionHandler)XScuGic_InterruptHandler,
+      &xscugic_inst);
+
+
+  // Register an interrupt handler for the timer interrupt at the
+  // interrupt controller.
+  status = XScuGic_Connect(&xscugic_inst, CORDIC_INTR_ID,
+              (Xil_ExceptionHandler)CordicISRHandler,
+              (void *)&xcordic_inst);
+  if (status != XST_SUCCESS) {
+    return status;
+  }
+
+  // Enable the generic interrupt controller
+  XScuGic_Enable(&xscugic_inst, CORDIC_INTR_ID);
+
+  // Enable the interrupts of the timer
+  XCordic_InterruptEnable(&xcordic_inst);
+
+  // Enable interrupts for the processor
+  Xil_ExceptionEnable();
+
+  return OK;
 }

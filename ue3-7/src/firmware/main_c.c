@@ -13,11 +13,17 @@ int main_c()
   float cos;
   float sin;
 
+  int success = cordic_init();
+  if (success == FAIL)
+  {
+    printf("Initialization of Cordic core in cordic_init() failed!");
+    return -1;
+  }
+
   for (float angle = START_ANGLE; angle < END_ANGLE; angle += ANGLE_INCR)
   {
     CordicCalcXY(angle, &cos, &sin, CORDIC_BASE_ADDRESS);
     printf("Phi: %2.3f; Cos: %1.4f; Sin: %1.4f\n", angle, cos, sin);
-    // printf("%2.5f, %1.5f, %1.5f\n", angle, cos, sin);
   }
 
   return 0;

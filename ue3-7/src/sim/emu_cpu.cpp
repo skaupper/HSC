@@ -55,6 +55,9 @@ EmuCpu::EmuCpu(sc_module_name module_name, main_func_ptr_t main_entry_point)
     : sc_module(module_name), mMainFuncPtr(main_entry_point)
 {
   SC_THREAD(run);
+
+  SC_METHOD(ISR);
+  sensitive << iIrq.pos();
 }
 
 EmuCpu *EmuCpu::getInstance()
@@ -78,6 +81,11 @@ EmuCpu *EmuCpu::createInstance(char const *module_name, main_func_ptr_t main_ent
   return mInstance;
 }
 
+void EmuCpu::setIsrCallback(isr_func_ptr_t isr_func)
+{
+  mIsrFunc = isr_func;
+}
+
 void EmuCpu::read_bus(uint32_t addr, uint32_t *rd_data)
 {
   doTransaction(tlm::TLM_READ_COMMAND, addr, rd_data);
@@ -86,6 +94,14 @@ void EmuCpu::read_bus(uint32_t addr, uint32_t *rd_data)
 void EmuCpu::write_bus(uint32_t addr, uint32_t wr_data)
 {
   doTransaction(tlm::TLM_WRITE_COMMAND, addr, &wr_data);
+}
+
+void EmuCpu::ISR()
+{
+  if(mIsrFunc == NULL)
+    cerr << "EmuCpu::ISR() was called, before the ISR callback was set!" << endl;
+  else
+    mIsrFunc(NULL);
 }
 
 void EmuCpu::run()
@@ -123,4 +139,9 @@ extern "C" void read_bus(uint32_t addr, uint32_t *data)
 extern "C" void write_bus(uint32_t addr, uint32_t data)
 {
   EmuCpu::getInstance()->write_bus(addr, data);
+}
+
+extern "C" void setIsrCallback(isr_func_ptr_t isr_func)
+{
+  EmuCpu::getInstance()->setIsrCallback(isr_func);
 }

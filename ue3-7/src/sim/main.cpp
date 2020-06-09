@@ -3,6 +3,10 @@
 
 
 extern "C" int main_c(); // from firmware/main_c.c
+extern "C" void wait()
+{
+  wait(1, SC_NS);
+}
 
 int sc_main(int argc, char *argv[])
 {
@@ -14,6 +18,11 @@ int sc_main(int argc, char *argv[])
 
   // Connect CPU with peripherals
   cpu->mSocket.bind(cordicTlm.mSocket);
+
+  sc_signal<bool> rdy("ready");
+  cordicTlm.oIrq(rdy);
+  cpu->iIrq(rdy);
+
 
   // Start simulation (sc_stop is called when the CPU application is finished)
   sc_start();
