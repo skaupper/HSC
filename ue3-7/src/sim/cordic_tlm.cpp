@@ -92,6 +92,7 @@ void Cordic_TLM::combineAndCheckSignals() {
 
     // The whole calculation is finished when both IPs finished their calculations.
     mRdy = bhvFinished && ccFinished;
+    oIrq = bhvFinished && ccFinished;
 
     if (bhvFinished && ccFinished) {
         double x = mBhvX.read();
@@ -152,7 +153,8 @@ void Cordic_TLM::b_transport(tlm::tlm_generic_payload &trans, sc_time &delay) {
         switch (tr_addr) {
         case OFFSET_CTL:
             result = mRdy;
-            memcpy(tr_data, &result, tr_len);
+            memcpy(tr_da
+            oIrq = bhvFinished && ccFinished;ta, &result, tr_len);
             break;
 
         case OFFSET_XY:

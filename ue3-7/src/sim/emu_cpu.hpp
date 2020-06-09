@@ -14,6 +14,7 @@
 #include <tlm_utils/simple_initiator_socket.h>
 
 typedef int (*main_func_ptr_t)();
+typedef int (*isr_func_ptr_t)();
 
 SC_MODULE(EmuCpu)
 {
@@ -22,6 +23,8 @@ SC_MODULE(EmuCpu)
 
   static EmuCpu *getInstance();
   static EmuCpu *createInstance(char const *module_name, main_func_ptr_t main_entry_point);
+
+  void setIsrCallback(isr_func_ptr_t isr_func);
 
   void read_bus(uint32_t addr, uint32_t * rd_data);
   void write_bus(uint32_t addr, uint32_t wr_data);
@@ -33,10 +36,14 @@ private:
   EmuCpu &operator=(const EmuCpu &) = delete;
 
   void run();
+  void ISR();
   void doTransaction(tlm::tlm_command cmd, uint32_t addr, uint32_t * data);
+
+  sc_in<bool> iIrq;
 
   static EmuCpu *mInstance;
   main_func_ptr_t mMainFuncPtr;
+  isr_func_ptr_t mIsrFunc;
 };
 
 #endif /* _EMU_CPU_H_ */

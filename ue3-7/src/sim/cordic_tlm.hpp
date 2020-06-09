@@ -25,6 +25,8 @@ SC_MODULE(Cordic_TLM) {
 
     virtual void b_transport(tlm::tlm_generic_payload & trans, sc_time & delay);
 
+    sc_out<bool> oIrq;
+
 private:
     void generateReset();
     void combineAndCheckSignals();
