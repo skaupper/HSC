@@ -5,5 +5,10 @@ int sc_main(int argc, char *argv[])
   Top top("top");
 
   sc_start();
-  return 0;
+
+  if (top.mSuccess.read()) {
+    return 0;
+  } else {
+    return 1;
+  }
 }

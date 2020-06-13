@@ -83,12 +83,15 @@ void CordicTb::doStimulate()
       maxError = error;
   }
 
-  if (!success)
-    std::cerr << "Simulation finished with error!" << std::endl;
-  else
-    std::cout << "Simulation finished successfully!" << std::endl;
-
   std::cout << "Max. error: " << maxError << " (" << std::abs(std::log2(maxError)) << " bits)" << std::endl;
+
+  if (!success) {
+    std::cerr << "Simulation finished with error!" << std::endl;
+  } else {
+    std::cout << "Simulation finished successfully!" << std::endl;
+  }
+
+  oSuccess = success;
 
   sc_stop();
 }

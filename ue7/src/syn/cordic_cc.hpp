@@ -14,7 +14,7 @@
 
 
 
-SC_MODULE(CordicCc)
+SC_MODULE(cordic_cc)
 {
   sc_in<bool> iClk;
   sc_in<bool> inRst;
@@ -24,7 +24,7 @@ SC_MODULE(CordicCc)
   sc_out<xy_t> oX;
   sc_out<xy_t> oY;
 
-  SC_CTOR(CordicCc);
+  SC_CTOR(cordic_cc);
 
 private:
     void calc();

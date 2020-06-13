@@ -1,7 +1,8 @@
 #ifndef CORDIC_TB_H
 #define CORDIC_TB_H
 
-#include "../syn/cordic_cc.hpp"
+#include "cordic_syn.h"
+
 
 SC_MODULE(CordicTb)
 {
@@ -11,6 +12,8 @@ SC_MODULE(CordicTb)
   sc_out<phi_t> oPhi;
   sc_in<xy_t> iX;
   sc_in<xy_t> iY;
+
+  sc_out<bool> oSuccess;
 
   SC_CTOR(CordicTb)
   {

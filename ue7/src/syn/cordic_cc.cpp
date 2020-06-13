@@ -31,12 +31,12 @@ static void calcK(double *K)
 }
 
 
-CordicCc::CordicCc(sc_module_name name) : sc_module(name) {
+cordic_cc::cordic_cc(sc_module_name name) : sc_module(name) {
     SC_CTHREAD(calc, iClk.pos());
     reset_signal_is(inRst, false);
 }
 
-void CordicCc::calc() {
+void cordic_cc::calc() {
 #pragma HLS RESOURCE variable=iStart core=AXI4LiteS metadata="-bus_bundle cordic_if"
 #pragma HLS RESOURCE variable=iPhi core=AXI4LiteS metadata="-bus_bundle cordic_if"
 #pragma HLS RESOURCE variable=oX core=AXI4LiteS metadata="-bus_bundle cordic_if"

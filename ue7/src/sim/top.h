@@ -2,7 +2,7 @@
 #define TOP_H
 
 #include "CordicTb.h"
-#include "../syn/cordic_cc.hpp"
+#include "cordic_syn.h"
 
 
 SC_MODULE(Top)
@@ -17,13 +17,15 @@ SC_MODULE(Top)
   sc_signal<xy_t> mX;
   sc_signal<xy_t> mY;
 
+  sc_signal<bool> mSuccess;
+
 
   // CTOR
   SC_HAS_PROCESS(Top);
 
   Top(sc_module_name name) : sc_module(name), mClk("clk", 10, SC_NS)
   {
-    mCordic = new CordicCc("CORDIC");
+    mCordic = new cordic_cc("CORDIC");
     mTb = new CordicTb("Testbench");
 
     mCordic->iClk(mClk);
@@ -41,9 +43,11 @@ SC_MODULE(Top)
     mTb->iX(mX);
     mTb->iY(mY);
 
+    mTb->oSuccess(mSuccess);
+
     SC_THREAD(generateReset);
 
-
+#ifdef WRITE_TRACE
     // Configure trace file
     sc_trace_file *tf;
     tf = sc_create_vcd_trace_file("bin/cordic_trace");
@@ -55,6 +59,7 @@ SC_MODULE(Top)
     sc_trace(tf, mPhi, "iPhi");
     sc_trace(tf, mX, "oX");
     sc_trace(tf, mY, "oY");
+#endif
   }
 
 
@@ -67,7 +72,7 @@ private:
       mReset = 1;
   }
 
-  CordicCc *mCordic;
+  cordic_cc *mCordic;
   CordicTb *mTb;
 };
 
