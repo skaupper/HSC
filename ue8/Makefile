@@ -1,6 +1,8 @@
 cpp: all.sim all.tb
 
-all: all.sim all.tb all.hls all.vivado
+hw: all.hls all.vivado
+
+all: cpp hw
 
 clean: clean.sim clean.tb clean.hls clean.vivado
 	rm -rf generated/
@@ -16,4 +18,4 @@ EMUCPU=1
 -include makefiles/Makefile.vivado
 
 
-.PHONY: all clean cpp
+.PHONY: all clean cpp hw
