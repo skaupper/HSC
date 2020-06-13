@@ -1,6 +1,6 @@
 VIVADO_SCRIPT_DIR=scripts
 
-all.vivado:
+all.vivado: project.vivado synth.vivado
 
 project.vivado:
 	$(VIVADO_SCRIPT_DIR)/run.sh project_vivado
