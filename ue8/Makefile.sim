@@ -1,0 +1,92 @@
+SIM_BIN_NAME=sim
+
+# Compile and link flags
+SIM_DEFINES=
+SIM_CPPDEFINES=$(SIM_DEFINES) SC_INCLUDE_FX
+SIM_CDEFINES=$(SIM_DEFINES)
+SIM_CPPFLAGS=-Wall -Werror -Wno-unknown-pragmas -pedantic \
+			 --std=c++11 -O0 -g \
+			 $(addprefix -D,$(SIM_CPPDEFINES)) \
+			 $(addprefix -I,$(SIM_INC_DIRS))
+SIM_CFLAGS=-Wall -Werror -pedantic \
+		   --std=gnu11 -O0 -g \
+		   $(addprefix -D,$(SIM_CDEFINES)) \
+		   $(addprefix -I,$(SIM_INC_DIRS))
+SIM_LDFLAGS=-lpthread -lsystemc
+
+# Directory constants
+SIM_BIN_DIR=bin
+SIM_SRC_DIRS=src/cordic src/firmware src/firmware/driver_stubs src/sim
+SIM_OBJ_DIR=obj/sim/
+SIM_INC_DIRS=src/
+
+# Source and object files
+SIM_BINARY=$(SIM_BIN_DIR)/$(SIM_BIN_NAME)
+
+
+# Conditionals
+
+ifdef EMUCPU
+	SIM_DEFINES+=EMUCPU
+	SIM_INC_DIRS+=src/firmware/driver_stubs
+	SIM_SRC_DIRS+=src/firmware/driver_stubs
+endif
+
+
+
+# Process C/C++ sources
+
+SIM_CPP_SOURCES=$(foreach CUR_SRC_DIR,$(SIM_SRC_DIRS),$(wildcard $(CUR_SRC_DIR)/*.cpp))
+SIM_C_SOURCES=$(foreach CUR_SRC_DIR,$(SIM_SRC_DIRS),$(wildcard $(CUR_SRC_DIR)/*.c))
+SIM_SOURCES=$(SIM_CPP_SOURCES) $(SIM_C_SOURCES)
+
+SIM_CPP_OBJECTS=$(SIM_CPP_SOURCES:%.cpp=%.o)
+SIM_C_OBJECTS=$(SIM_C_SOURCES:%.c=%.o)
+SIM_OBJECTS_NO_PREFIX=$(SIM_CPP_OBJECTS) $(SIM_C_OBJECTS)
+SIM_OBJECTS=$(addprefix $(SIM_OBJ_DIR)/,$(SIM_OBJECTS_NO_PREFIX))
+
+SIM_C_DEPS=$(addprefix $(SIM_OBJ_DIR)/,$(SIM_C_OBJECTS:%.o=%.d))
+SIM_CPP_DEPS=$(addprefix $(SIM_OBJ_DIR)/,$(SIM_CPP_OBJECTS:%.o=%.d))
+
+
+# General targets
+all.sim: $(SIM_BIN_DIR) $(SIM_OBJ_DIR) $(SIM_BINARY)
+
+print.sim:
+	@echo "Sources:"
+	@echo $(SIM_SOURCES)
+	@echo
+	@echo "Objects:"
+	@echo $(SIM_OBJECTS)
+	@echo
+	@echo "C++ Deps:"
+	@echo $(SIM_CPP_DEPS)
+
+clean.sim:
+	rm -rf $(SIM_OBJ_DIR)
+	rm -rf $(SIM_BIN_DIR)
+
+$(SIM_OBJ_DIR)::
+	mkdir -p $(SIM_OBJ_DIR)
+
+$(SIM_BIN_DIR)::
+	mkdir -p $(SIM_BIN_DIR)
+
+
+# Compile and link targets
+$(SIM_BINARY): $(SIM_OBJECTS)
+	$(CXX) $^ $(SIM_LDFLAGS) -o $@
+
+-include $(SIM_CPP_DEPS)
+$(SIM_OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(shell dirname $@)
+	$(CXX) -c $< $(SIM_CPPFLAGS) -MMD -o $@
+
+-include $(SIM_C_DEPS)
+$(SIM_OBJ_DIR)/%.o: %.c
+	@mkdir -p $(shell dirname $@)
+	$(CC) -c $< $(SIM_CFLAGS) -MMD -o $@
+
+
+
+.PHONY: all.sim clean.sim
