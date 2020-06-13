@@ -62,4 +62,4 @@ $(TB_OBJ_DIR)/%.o: %.cpp
 	$(CXX) -c $< $(TB_CPPFLAGS) -MMD -o $@
 
 
-.PHONY: all.tb clean.tb
+.PHONY: all.tb print.tb clean.tb

@@ -89,4 +89,4 @@ $(SIM_OBJ_DIR)/%.o: %.c
 
 
 
-.PHONY: all.sim clean.sim
+.PHONY: all.sim print.sim clean.sim
