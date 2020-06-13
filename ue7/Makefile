@@ -2,10 +2,8 @@ BIN_NAME=ue7
 
 # Compile and link flags
 DEFINES=
-CPPDEFINES=$(DEFINES) SC_INCLUDE_FX
-CDEFINES=$(DEFINES)
+CPPDEFINES=$(DEFINES) SC_INCLUDE_FX WRITE_TRACE
 CPPFLAGS=-Wall -Werror -Wno-unknown-pragmas -pedantic --std=c++11 -O0 -g $(addprefix -D,$(CPPDEFINES))
-CFLAGS=-Wall -Werror -pedantic --std=gnu11 -O0 -g $(addprefix -D,$(CDEFINES))
 LDFLAGS=-lpthread -lsystemc
 
 # Directory constants
@@ -17,15 +15,12 @@ OBJ_DIR=obj
 BINARY=$(BIN_DIR)/$(BIN_NAME)
 
 CPP_SOURCES=$(foreach CUR_SRC_DIR,$(SRC_DIRS),$(wildcard $(CUR_SRC_DIR)/*.cpp))
-C_SOURCES=$(foreach CUR_SRC_DIR,$(SRC_DIRS),$(wildcard $(CUR_SRC_DIR)/*.c))
-SOURCES=$(CPP_SOURCES) $(C_SOURCES)
+SOURCES=$(CPP_SOURCES)
 
 CPP_OBJECTS=$(CPP_SOURCES:%.cpp=%.o)
-C_OBJECTS=$(C_SOURCES:%.c=%.o)
-OBJECTS_NO_PREFIX=$(CPP_OBJECTS) $(C_OBJECTS)
+OBJECTS_NO_PREFIX=$(CPP_OBJECTS)
 OBJECTS=$(addprefix $(OBJ_DIR)/,$(OBJECTS_NO_PREFIX))
 
-C_DEPS=$(addprefix $(OBJ_DIR)/,$(C_OBJECTS:%.o=%.d))
 CPP_DEPS=$(addprefix $(OBJ_DIR)/,$(CPP_OBJECTS:%.o=%.d))
 
 
@@ -62,11 +57,27 @@ $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(shell dirname $@)
 	$(CXX) -c $< $(CPPFLAGS) -MMD -o $@
 
--include $(C_DEPS)
-$(OBJ_DIR)/%.o: %.c
-	@mkdir -p $(shell dirname $@)
-	$(CC) -c $< $(CFLAGS) -MMD -o $@
 
 
+#
+# HLS specific targets
+#
 
-.PHONY: all clean
+SCRIPT_DIR=scripts
+
+hls: | hls_project hls_synth hls_export
+
+hls_project:
+	$(SCRIPT_DIR)/run.sh project_hls
+
+hls_synth:
+	$(SCRIPT_DIR)/run.sh synth_hls
+
+hls_export:
+	$(SCRIPT_DIR)/run.sh export_hls
+
+hls_clean:
+	rm -rf generated/
+
+
+.PHONY: all clean hls hls_project hls_synth hls_export
