@@ -22,31 +22,21 @@ bool CordicTb::run_test(const double phi, double *pError)
   exp_cos = cos(phi);
   exp_sin = sin(phi);
 
-  std::cout << "wait rdy 1" << std::endl;
-  while (iRdy == false) {
-	  wait(1, SC_NS);
+  // iRdy may already be true
+  if (iRdy == false) {
+      wait(iRdy.posedge_event());
   }
 
   // Start calculation and wait for a result
   oPhi = phi;
   oStart = true;
-  std::cout << "wait rdy 0" << std::endl;
-
-  while (iRdy == true) {
-      wait(1, SC_NS);
-  }
+  wait(iRdy.negedge_event());
   oStart = false;
+  wait(iRdy.posedge_event());
 
   // Get the result and compare against the expected values
   act_cos = iX.read().to_double();
   act_sin = iY.read().to_double();
-
-  std::cout << "wait rdy 2" << std::endl;
-  while (iRdy == false) {
-      wait(1, SC_NS);
-  }
-
-  std::cout << "finished" << std::endl;
 
   // Calculate the maximum error of the current test case
   if (pError)
@@ -78,35 +68,26 @@ bool CordicTb::run_test(const double phi, double *pError)
 void CordicTb::doStimulate()
 {
   static const double INCR = 0.001;
-  bool success;
+  bool success = true;
   double error, maxError = 0;
 
-  std::cout << "doStimulate" << std::endl;
+  wait(inRst.posedge_event());
 
   // Test the CORDIC implementation with a lot values between 0° and 90°
   for (double phi = 0.0; phi <= M_PI / 2; phi += INCR)
   {
-    success = run_test(phi, &error);
+    if (!run_test(phi, &error))
+      success = false;
 
     if (error > maxError)
-    {
       maxError = error;
-    }
-
-    if (!success)
-    {
-      // break;
-    }
   }
 
   if (!success)
-  {
     std::cerr << "Simulation finished with error!" << std::endl;
-  }
   else
-  {
     std::cout << "Simulation finished successfully!" << std::endl;
-  }
+
   std::cout << "Max. error: " << maxError << " (" << std::abs(std::log2(maxError)) << " bits)" << std::endl;
 
   sc_stop();

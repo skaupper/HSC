@@ -4,7 +4,7 @@ BIN_NAME=ue7
 DEFINES=
 CPPDEFINES=$(DEFINES) SC_INCLUDE_FX
 CDEFINES=$(DEFINES)
-CPPFLAGS=-Wall -Werror -Wno-error=unknown-pragmas -pedantic --std=c++11 -O0 -g $(addprefix -D,$(CPPDEFINES))
+CPPFLAGS=-Wall -Werror -Wno-unknown-pragmas -pedantic --std=c++11 -O0 -g $(addprefix -D,$(CPPDEFINES))
 CFLAGS=-Wall -Werror -pedantic --std=gnu11 -O0 -g $(addprefix -D,$(CDEFINES))
 LDFLAGS=-lpthread -lsystemc
 

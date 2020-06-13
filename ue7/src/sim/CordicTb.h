@@ -5,6 +5,7 @@
 
 SC_MODULE(CordicTb)
 {
+  sc_in<bool> inRst;
   sc_out<bool> oStart;
   sc_in<bool> iRdy;
   sc_out<phi_t> oPhi;

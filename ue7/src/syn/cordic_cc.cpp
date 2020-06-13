@@ -48,7 +48,7 @@ void CordicCc::calc() {
     //
 
     typedef sc_fixed<28, 2> z_calc_t;
-    typedef sc_fixed<20, 2> xy_calc_t;
+    typedef sc_fixed<21, 2> xy_calc_t;
 
 
     //
@@ -78,7 +78,7 @@ void CordicCc::calc() {
     //
 
     // Control state
-    bool calcStarted    = false;
+    bool calcStarted  = false;
     short currentIter = 0;
 
 
