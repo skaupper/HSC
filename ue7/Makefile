@@ -65,7 +65,7 @@ $(OBJ_DIR)/%.o: %.cpp
 
 SCRIPT_DIR=scripts
 
-hls: | hls_project hls_synth hls_export
+hls: hls_project hls_synth hls_export
 
 hls_project:
 	$(SCRIPT_DIR)/run.sh project_hls
