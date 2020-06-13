@@ -25,7 +25,6 @@
 #
 #    "/mnt/data-hdd/FH/HSC2/Vivado/BasicCordicSystem/BasicCordicSystem.srcs/sources_1/bd/basic_cordic_system/basic_cordic_system.bd"
 #    "/mnt/data-hdd/FH/HSC2/Vivado/BasicCordicSystem/BasicCordicSystem.srcs/sources_1/bd/basic_cordic_system/hdl/basic_cordic_system_wrapper.v"
-#    "/mnt/data-hdd/FH/HSC2/Vivado/BasicCordicSystem/BasicCordicSystem.srcs/constrs_1/new/io_port_constraints.xdc"
 #
 # 3. The following remote source files that were added to the original project:-
 #
@@ -103,8 +102,8 @@ if { $::argc > 0 } {
 set orig_proj_dir "[file normalize "$origin_dir/"]"
 
 # Create project
-file mkdir ../output
-create_project -force ${_xil_proj_name_} ../output -part xc7z007sclg225-1
+file mkdir ../$design_name
+create_project -force ${_xil_proj_name_} ../$design_name -part xc7z007sclg225-1
 
 # Set the directory path for the new project
 set proj_dir [get_property directory [current_project]]
@@ -136,6 +135,7 @@ set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_use
 set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
 set_property -name "simulator_language" -value "Mixed" -objects $obj
 set_property -name "xpm_libraries" -value "XPM_CDC XPM_MEMORY" -objects $obj
+set_property -name "ip_repo_paths" -value "../ips" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {
@@ -150,16 +150,6 @@ set_property -name "top" -value "${design_name}_wrapper" -objects $obj
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
   create_fileset -constrset constrs_1
 }
-
-# Set 'constrs_1' fileset object
-set obj [get_filesets constrs_1]
-
-# Add/Import constrs file and set constrs file properties
-set file "[file normalize "$origin_dir/../../src/vivado/constraints/io_port_constraints.xdc"]"
-set file_added [add_files -norecurse -fileset $obj [list $file]]
-set file "src/vivado/constraints/io_port_constraints.xdc"
-set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
-set_property -name "file_type" -value "XDC" -objects $file_obj
 
 # Set 'constrs_1' fileset properties
 set obj [get_filesets constrs_1]

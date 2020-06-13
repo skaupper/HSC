@@ -5,12 +5,12 @@
 # Description : Runs synthesis, implementation and creates bitstream for project
 ################################################################################
 
-set proj_name "BasicSystem"
-set design_name "basic_design"
+set proj_name "BasicCordicSystem"
+set design_name "basic_cordic_design"
 
 set parallel_jobs 4
 
-set project_dir ../output
+set project_dir ../$design_name
 set cache_dir $project_dir/ip_cache
 
 # Open project

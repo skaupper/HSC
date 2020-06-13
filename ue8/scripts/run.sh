@@ -17,9 +17,14 @@ VIVADO_BATCH="vivado -mode batch -nolog -nojournal -notrace"
 VIVADO_HLS_BATCH="vivado_hls -f"
 VIVADO_PROJECT_NAME="basic_cordic_system"
 
-PROJ_DIR=$SCRIPT_PATH/../generated/cordic_cc
+GENERAL_OUT_DIR=$SCRIPT_PATH/../generated
+PROJ_DIR=$GENERAL_OUT_DIR/cordic_cc
+IP_DIR=$GENERAL_OUT_DIR/ips
+
 
 mkdir -p $PROJ_DIR
+mkdir -p $IP_DIR
+
 cd $PROJ_DIR
 
 
@@ -36,16 +41,24 @@ elif [ "$ARG" == "sdk" ]; then
 elif [ "$ARG" == "project_hls" ]; then
   $VIVADO_HLS_BATCH $SCRIPT_PATH/create_hls_project.tcl
   exit 0
+elif [ "$ARG" == "sim_hls" ]; then
+  $VIVADO_HLS_BATCH $SCRIPT_PATH/sim_hls.tcl
+  exit 0
 elif [ "$ARG" == "synth_hls" ]; then
   $VIVADO_HLS_BATCH $SCRIPT_PATH/synth_hls.tcl
   exit 0
 elif [ "$ARG" == "export_hls" ]; then
   $VIVADO_HLS_BATCH $SCRIPT_PATH/export_hls.tcl
+  mkdir -p $IP_DIR/cordic
+  cp $PROJ_DIR/**/**/impl/ip/*.zip $IP_DIR/cordic
+  cd $IP_DIR/cordic
+  unzip *.zip
+  cd -
   exit 0
 else
   echo "===================================================================================="
   echo "(ERROR) Wrong or invalid argument."
-  echo "Usage: ./run.sh <project_vivado|synth_vivado|sdk|project_hls|synth_hls|export_hls>"
+  echo "Usage: ./run.sh <project_vivado|synth_vivado|sdk|project_hls|sim_hls|synth_hls|export_hls>"
   echo "===================================================================================="
   exit 1
 fi
