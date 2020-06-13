@@ -17,8 +17,8 @@ SIM_LDFLAGS=-lpthread -lsystemc
 # Directory constants
 SIM_BIN_DIR=bin
 SIM_SRC_DIRS=src/cordic src/firmware src/firmware/driver_stubs src/sim
-SIM_OBJ_DIR=obj/sim/
-SIM_INC_DIRS=src/
+SIM_OBJ_DIR=obj/sim
+SIM_INC_DIRS=src
 
 # Source and object files
 SIM_BINARY=$(SIM_BIN_DIR)/$(SIM_BIN_NAME)

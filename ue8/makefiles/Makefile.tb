@@ -12,8 +12,8 @@ TB_LDFLAGS=-lpthread -lsystemc
 # Directory constants
 TB_BIN_DIR=bin
 TB_SRC_DIRS=src/cordic src/tb
-TB_OBJ_DIR=obj/tb/
-TB_INC_DIRS=src/
+TB_OBJ_DIR=obj/tb
+TB_INC_DIRS=src
 
 # Source and object files
 TB_BINARY=$(TB_BIN_DIR)/$(TB_BIN_NAME)
