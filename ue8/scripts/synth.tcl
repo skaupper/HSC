@@ -114,7 +114,7 @@ set binaries ../binaries
 set impl_dir $project_dir/${proj_name}.runs/impl_1
 
 file mkdir $binaries
-file copy -force $impl_dir/${design_name}_wrapper.sysdef $binaries/
+file copy -force $impl_dir/${design_name}_wrapper.sysdef $binaries/${design_name}_wrapper.hdf
 
 puts "--- - Exporting Bitstream file."
 file copy -force $impl_dir/${design_name}_wrapper.bit $binaries/
