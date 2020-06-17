@@ -3,11 +3,12 @@
 
 #include "types.h"
 
-
 typedef void (*Xil_ExceptionHandler)(void *);
 
 void Xil_ExceptionInit(void);
 void Xil_ExceptionEnable(void);
-void Xil_ExceptionRegisterHandler(u16 IrqId, Xil_ExceptionHandler handler, void *inst);
+void Xil_ExceptionRegisterHandler(u16 IrqId,
+                                  Xil_ExceptionHandler handler,
+                                  void *inst);
 
 #endif

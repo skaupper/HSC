@@ -3,9 +3,7 @@
 
 #include "cordic_syn.h"
 
-
-SC_MODULE(CordicTb)
-{
+SC_MODULE(CordicTb) {
   sc_in<bool> inRst;
   sc_out<bool> oStart;
   sc_in<bool> iRdy;
@@ -15,12 +13,11 @@ SC_MODULE(CordicTb)
 
   sc_out<bool> oSuccess;
 
-  SC_CTOR(CordicTb)
-  {
+  SC_CTOR(CordicTb) {
     SC_THREAD(doStimulate);
   }
 
-private:
+ private:
   void doStimulate();
   bool run_test(const double phi, double *pError);
 };

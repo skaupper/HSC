@@ -2,7 +2,12 @@ cpp: all.sim all.tb
 
 hw: all.hls all.vivado
 
-all: cpp hw
+all: cpp hw clang-format
+
+clang-format:
+	@echo "Auto formatting all C/CPP files under src/"
+	clang-format-6.0 -i $$(git ls-files 'src/*.[ch]')
+	clang-format-6.0 -i $$(git ls-files 'src/*.[cpp]')
 
 clean: clean.sim clean.tb clean.hls clean.vivado
 	rm -rf generated/
@@ -19,4 +24,4 @@ EMUCPU=1
 -include makefiles/Makefile.sdk
 
 
-.PHONY: all clean cpp hw
+.PHONY: all clean cpp hw clang-format

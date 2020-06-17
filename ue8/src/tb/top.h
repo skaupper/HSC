@@ -4,9 +4,7 @@
 #include "CordicTb.h"
 #include "cordic_syn.h"
 
-
-SC_MODULE(Top)
-{
+SC_MODULE(Top) {
   // Signals for Cordic and TB
   sc_clock mClk;
   sc_signal<bool> mReset;
@@ -19,12 +17,10 @@ SC_MODULE(Top)
 
   sc_signal<bool> mSuccess;
 
-
   // CTOR
   SC_HAS_PROCESS(Top);
 
-  Top(sc_module_name name) : sc_module(name), mClk("clk", 10, SC_NS)
-  {
+  Top(sc_module_name name) : sc_module(name), mClk("clk", 10, SC_NS) {
     mCordic = new cordic_cc("CORDIC");
     mTb = new CordicTb("Testbench");
 
@@ -62,14 +58,11 @@ SC_MODULE(Top)
 #endif
   }
 
-
-
-private:
-  void generateReset()
-  {
-      mReset = 0;
-      wait(127, SC_NS);
-      mReset = 1;
+ private:
+  void generateReset() {
+    mReset = 0;
+    wait(127, SC_NS);
+    mReset = 1;
   }
 
   cordic_cc *mCordic;

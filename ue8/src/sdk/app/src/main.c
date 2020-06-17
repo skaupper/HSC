@@ -1,26 +1,24 @@
+#include <sleep.h>
 #include <stdio.h>
 #include <xil_printf.h>
-#include <sleep.h>
 
 #include "platform.h"
 #include "private_timer.h"
 
-#define msleep(msec) usleep((msec) * 1000)
+#define msleep(msec) usleep((msec)*1000)
 
 static XScuGic intc;
 
-static void timerExpired(void *state)
-{
+static void timerExpired(void *state) {
   XScuTimer *timer = (XScuTimer *)state;
   XScuTimer_ClearInterruptStatus(timer);
 
   static int counter = 0;
 
-  counter = (counter+1) % 4;
+  counter = (counter + 1) % 4;
 }
 
-int main()
-{
+int main() {
   int status = 0;
 
   // Do initialization
@@ -32,13 +30,16 @@ int main()
 
   if (status != XST_SUCCESS) {
     printf("Initialization failed!!!\n");
-    while(1);
+    while (1)
+      ;
   }
 
   // Endless loop. Let the timer interrupt do the work.
-  s16 x, y, z;
+  s16 x = 0;
+  s16 y = 0;
+  s16 z = 0;
 
-  while(1) {
+  while (1) {
     msleep(250);
     int temp = 4711;
 

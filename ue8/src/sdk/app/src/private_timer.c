@@ -9,18 +9,15 @@
 
 #include "private_timer.h"
 
-
 static XScuTimer timer;
 static u32 timerReloadValue = 0xffff;
 static Xil_ExceptionHandler timerInterruptHandler = NULL;
-
 
 //
 // Private helper functions
 //
 
-static void __interruptHandler(void *state)
-{
+static void __interruptHandler(void *state) {
   if (timerInterruptHandler != NULL) {
     timerInterruptHandler(state);
   }
@@ -28,12 +25,9 @@ static void __interruptHandler(void *state)
   XScuTimer_LoadTimer(&timer, timerReloadValue);
 }
 
-
-static int __connectToIntrSystem(XScuGic *intc)
-{
+static int __connectToIntrSystem(XScuGic *intc) {
   int status;
   XScuGic_Config *intcConfig;
-
 
   // Query the interrupt controller configuration entry
   intcConfig = XScuGic_LookupConfig(INTC_DEVICE_ID);
@@ -53,15 +47,15 @@ static int __connectToIntrSystem(XScuGic *intc)
   // Register an universal exception handler for all interrupts.
   // The interrupt controller will further forward interrupts.
   Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_IRQ_INT,
-      (Xil_ExceptionHandler)XScuGic_InterruptHandler,
-      intc);
-
+                               (Xil_ExceptionHandler)XScuGic_InterruptHandler,
+                               intc);
 
   // Register an interrupt handler for the timer interrupt at the
   // interrupt controller.
-  status = XScuGic_Connect(intc, TIMER_INTR_ID,
-              (Xil_ExceptionHandler)__interruptHandler,
-              (void *)&timer);
+  status = XScuGic_Connect(intc,
+                           TIMER_INTR_ID,
+                           (Xil_ExceptionHandler)__interruptHandler,
+                           (void *)&timer);
   if (status != XST_SUCCESS) {
     return status;
   }
@@ -78,14 +72,11 @@ static int __connectToIntrSystem(XScuGic *intc)
   return XST_SUCCESS;
 }
 
-
-
 //
 // Public interface functions
 //
 
-int PrivateTimer_Init(XScuGic *intc)
-{
+int PrivateTimer_Init(XScuGic *intc) {
   int status;
   XScuTimer_Config *config;
 
@@ -123,28 +114,23 @@ int PrivateTimer_Init(XScuGic *intc)
   return XST_SUCCESS;
 }
 
-void PrivateTimer_Disable(XScuGic *intc)
-{
+void PrivateTimer_Disable(XScuGic *intc) {
   // Disconnect the timer interrupt from the interrupt controller
   XScuGic_Disconnect(intc, TIMER_INTR_ID);
 }
 
-void PrivateTimer_SetReloadValue(u32 value)
-{
+void PrivateTimer_SetReloadValue(u32 value) {
   timerReloadValue = value;
 }
 
-void PrivateTimer_SetIntHandler(Xil_ExceptionHandler handler)
-{
+void PrivateTimer_SetIntHandler(Xil_ExceptionHandler handler) {
   timerInterruptHandler = handler;
 }
 
-
-
-void PrivateTimer_SetFrequency(u16 hz)
-{
-  // See also: https://developer.arm.com/docs/ddi0407/f/global-timer-private-timers-and-watchdog-registers/about-the-private-timer-and-watchdog-blocks/calculating-timer-intervals
+void PrivateTimer_SetFrequency(u16 hz) {
+  // See also:
+  // https://developer.arm.com/docs/ddi0407/f/global-timer-private-timers-and-watchdog-registers/about-the-private-timer-and-watchdog-blocks/calculating-timer-intervals
   u8 prescaler = XScuTimer_GetPrescaler(&timer);
-  u32 neededReloadValue = (TICKS_PER_SECOND)/(hz*(prescaler+1)) - 1;
+  u32 neededReloadValue = (TICKS_PER_SECOND) / (hz * (prescaler + 1)) - 1;
   PrivateTimer_SetReloadValue(neededReloadValue);
 }

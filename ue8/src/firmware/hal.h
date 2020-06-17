@@ -20,4 +20,4 @@ void CordicSetISRCallback(void (*isr_func)(void*));
 
 void Wait();
 
-#endif // _HAL_H_
+#endif  // _HAL_H_

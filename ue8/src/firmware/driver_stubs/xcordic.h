@@ -3,19 +3,17 @@
 
 #include "types.h"
 
-
 //
 // Typedefs
 //
 
 typedef struct {
-    u8 IsReady;
+  u8 IsReady;
 } XCordic;
 
 typedef struct {
-    u16 DeviceId;
+  u16 DeviceId;
 } XCordic_Config;
-
 
 //
 // Function prototypes
