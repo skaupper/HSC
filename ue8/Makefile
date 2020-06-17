@@ -7,7 +7,7 @@ all: cpp hw clang-format
 clang-format:
 	@echo "Auto formatting all C/CPP files under src/"
 	clang-format-6.0 -i $$(git ls-files 'src/*.[ch]')
-	clang-format-6.0 -i $$(git ls-files 'src/*.[cpp]')
+	clang-format-6.0 -i $$(git ls-files 'src/*.[ch]pp')
 
 clean: clean.sim clean.tb clean.hls clean.vivado
 	rm -rf generated/

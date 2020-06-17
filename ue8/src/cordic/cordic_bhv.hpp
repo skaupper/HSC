@@ -12,19 +12,17 @@
 
 #include "cordic.hpp"
 
+SC_MODULE(CordicBhv) {
+  sc_in<bool> iStart;
+  sc_out<bool> oRdy;
+  sc_in<phi_t> iPhi;
+  sc_out<xy_t> oX;
+  sc_out<xy_t> oY;
 
-SC_MODULE(CordicBhv)
-{
-    sc_in<bool> iStart;
-    sc_out<bool> oRdy;
-    sc_in<phi_t> iPhi;
-    sc_out<xy_t> oX;
-    sc_out<xy_t> oY;
+  SC_CTOR(CordicBhv);
 
-    SC_CTOR(CordicBhv);
-
-private:
-    void calc();
+ private:
+  void calc();
 };
 
 #endif /* _CORDIC_H */

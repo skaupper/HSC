@@ -8,21 +8,19 @@
 /*****************************************************************************/
 
 #include "cordic_bhv.hpp"
+
 #include <cmath>
 
 using namespace std;
 
-CordicBhv::CordicBhv(sc_module_name name) : sc_module(name)
-{
+CordicBhv::CordicBhv(sc_module_name name) : sc_module(name) {
   SC_THREAD(calc);
 }
 
-void CordicBhv::calc()
-{
+void CordicBhv::calc() {
   oRdy.write(1);
 
-  while (true)
-  {
+  while (true) {
     wait(iStart.posedge_event());
     oRdy.write(0);
     wait(SC_ZERO_TIME);
@@ -37,8 +35,7 @@ void CordicBhv::calc()
     double z = phi;
     int d = 1;
 
-    for (int i = 0; i < ITERATIONS; i++)
-    {
+    for (int i = 0; i < ITERATIONS; i++) {
       if (z >= 0)
         d = 1;
       else

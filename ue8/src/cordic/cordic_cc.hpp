@@ -12,10 +12,7 @@
 
 #include "cordic.hpp"
 
-
-
-SC_MODULE(cordic_cc)
-{
+SC_MODULE(cordic_cc) {
   sc_in<bool> iClk;
   sc_in<bool> inRst;
   sc_in<bool> iStart;
@@ -26,11 +23,10 @@ SC_MODULE(cordic_cc)
 
   SC_CTOR(cordic_cc);
 
-private:
-    void calc();
+ private:
+  void calc();
 };
 
 typedef cordic_cc CordicCc;
-
 
 #endif /* _CORDIC_CC_HPP_ */
