@@ -16,6 +16,7 @@ EMUCPU=1
 -include makefiles/Makefile.tb
 -include makefiles/Makefile.hls
 -include makefiles/Makefile.vivado
+-include makefiles/Makefile.sdk
 
 
 .PHONY: all clean cpp hw

@@ -35,8 +35,8 @@ elif [ "$ARG" == "synth_vivado" ]; then
   $VIVADO_BATCH -source $SCRIPT_PATH/synth.tcl
   exit 0
 elif [ "$ARG" == "sdk" ]; then
-  xsdk -batch -source $SCRIPT_PATH/open_sdk.tcl
-  xsdk -workspace ../sdk #-eclipseargs -perspective org.eclipse.cdt.ui.CPerspective
+  xsdk -batch -source $SCRIPT_PATH/create_sdk.tcl
+  xsdk -workspace ../sdk
   exit 0
 elif [ "$ARG" == "project_hls" ]; then
   $VIVADO_HLS_BATCH $SCRIPT_PATH/create_hls_project.tcl
