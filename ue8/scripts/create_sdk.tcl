@@ -20,7 +20,7 @@ setws $workspace_dir
 cd $workspace_dir
 puts "### Set workspace to '[getws]'."
 
-puts "(VideoSigXilinx) Creating HW platform..."
+puts "--- Creating HW platform..."
 if {![file exists "$hw_name"]} {
   createhw -name $hw_name -hwspec ${design_name}_wrapper.hdf
 
@@ -32,23 +32,23 @@ if {![file exists "$hw_name"]} {
   file copy -force ${design_name}_wrapper.bit $hw_name/
 }
 
-puts "(VideoSigXilinx) Creating BSP..."
+puts "--- Creating BSP..."
 if {![file exists "$bsp_name"]} {
   createbsp -name $bsp_name -hwproject $hw_name -proc ps7_cortexa9_0 -os standalone
   configbsp -bsp $bsp_name stdin ps7_uart_1
   configbsp -bsp $bsp_name stdout ps7_uart_1
 }
 
-puts "(VideoSigXilinx) Importing main application..."
+puts "--- Importing main application..."
 importprojects ../../src/sdk/$app_name
 
-puts "(VideoSigXilinx) Importing other sources..."
+puts "--- Importing other sources..."
 # The following command could probably be replaced with
 # 'createlib' in the future (library project).
 # This would also remove the need to gitignore imported source files.
 #importsources -name $app_name -path src
 
-puts "(VideoSigXilinx) Loaded projects:"
+puts "--- Loaded projects:"
 set projects [getprojects]
 set i 0
 foreach proj $projects {
@@ -57,11 +57,11 @@ foreach proj $projects {
 }
 
 if {[catch {
-  puts "(VideoSigXilinx) Building all projects..."
+  puts "--- Building all projects..."
   projects -build
 } errmsg ]} {
-  puts "(VideoSigXilinx) Failed building all projects!"
-  puts "(VideoSigXilinx) Error information:"
+  puts "--- Failed building all projects!"
+  puts "--- Error information:"
   puts "ErrorMsg: $errmsg"
   puts "ErrorCode: $errorCode"
   puts "ErrorInfo:\n$errorInfo\n"
