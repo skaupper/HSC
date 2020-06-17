@@ -110,14 +110,14 @@ if {[catch {
 }
 
 puts "--- - Exporting HDF file."
-set sdk_dir ../sdk
+set binaries ../binaries
 set impl_dir $project_dir/${proj_name}.runs/impl_1
 
-file mkdir $sdk_dir
-file copy -force $impl_dir/${design_name}_wrapper.sysdef $sdk_dir/
+file mkdir $binaries
+file copy -force $impl_dir/${design_name}_wrapper.sysdef $binaries/
 
 puts "--- - Exporting Bitstream file."
-file copy -force $impl_dir/${design_name}_wrapper.bit $sdk_dir/
+file copy -force $impl_dir/${design_name}_wrapper.bit $binaries/
 
 puts "### Done."
 exit 0

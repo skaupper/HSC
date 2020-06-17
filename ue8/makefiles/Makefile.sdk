@@ -1,11 +1,11 @@
 SDK_SCRIPT_DIR=scripts
 
-all.sdk: project.sdk
+all.sdk: clean.sdk project.sdk
 
 project.sdk:
 	$(HLS_SCRIPT_DIR)/run.sh sdk
 
 clean.sdk:
-	rm -rf generated/cordic_cc
+	rm -rf generated/sdk
 
 .PHONY: all.sdk project.sdk clean.sdk
