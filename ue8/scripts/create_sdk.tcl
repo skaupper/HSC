@@ -14,6 +14,9 @@ set hw_name ${design_name}_hw
 set bsp_name standalone_bsp
 set app_name app
 
+set hdf_filepath ../binaries/${design_name}_wrapper.hdf
+set bit_filepath ../binaries/${design_name}_wrapper.bit
+
 puts "### Opening SDK..."
 
 setws $workspace_dir
@@ -22,14 +25,14 @@ puts "### Set workspace to '[getws]'."
 
 puts "--- Creating HW platform..."
 if {![file exists "$hw_name"]} {
-  createhw -name $hw_name -hwspec ${design_name}_wrapper.hdf
+  createhw -name $hw_name -hwspec $hdf_filepath
 
   # Create driver files
   # NOTE: This is not documented in the XSCT UG1208
   getperipherals $hw_name/system.hdf
 
   # Replace the auto-generated bitfile with the 'real' one.
-  file copy -force ${design_name}_wrapper.bit $hw_name/
+  file copy -force $bit_filepath $hw_name/
 }
 
 puts "--- Creating BSP..."
