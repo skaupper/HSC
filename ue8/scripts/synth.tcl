@@ -114,7 +114,10 @@ set sdk_dir ../sdk
 set impl_dir $project_dir/${proj_name}.runs/impl_1
 
 file mkdir $sdk_dir
-file copy -force $impl_dir/${design_name}_wrapper.sysdef $sdk_dir/${design_name}_wrapper.hdf
+file copy -force $impl_dir/${design_name}_wrapper.sysdef $sdk_dir/
+
+puts "--- - Exporting Bitstream file."
+file copy -force $impl_dir/${design_name}_wrapper.bit $sdk_dir/
 
 puts "### Done."
 exit 0
