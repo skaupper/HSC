@@ -1,0 +1,8 @@
+################################################################################
+# File        : .gitignore
+# Author      : Michael Wurm <michael.wurm@students.fh-hagenberg.at>
+#               Sebastian Kaupper <sebastian.kaupper@students.fh-hagenberg.at>
+# Description : Local gitignore file for SDK main application
+################################################################################
+
+Debug/
