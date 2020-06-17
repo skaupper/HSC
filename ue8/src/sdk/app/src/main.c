@@ -13,9 +13,7 @@ static void timerExpired(void *state) {
   XScuTimer *timer = (XScuTimer *)state;
   XScuTimer_ClearInterruptStatus(timer);
 
-  static int counter = 0;
-
-  counter = (counter + 1) % 4;
+  xil_printf("Timer expired\n");
 }
 
 int main() {
@@ -29,9 +27,9 @@ int main() {
   PrivateTimer_SetIntHandler((Xil_ExceptionHandler)timerExpired);
 
   if (status != XST_SUCCESS) {
-    printf("Initialization failed!!!\n");
-    while (1)
-      ;
+    xil_printf("Initialization failed!!!\n");
+    while (1) {
+    }
   }
 
   // Endless loop. Let the timer interrupt do the work.
@@ -44,7 +42,7 @@ int main() {
     int temp = 4711;
 
     x++;
-    printf("x: %d; y: %d; z: %d; temp: %d\n", x, y, z, temp);
+    xil_printf("x: %d; y: %d; z: %d; temp: %d\n", x, y, z, temp);
   }
 
   // Cleanup. Not reachable.

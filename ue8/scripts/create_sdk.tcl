@@ -40,6 +40,9 @@ if {![file exists "$bsp_name"]} {
   createbsp -name $bsp_name -hwproject $hw_name -proc ps7_cortexa9_0 -os standalone
   configbsp -bsp $bsp_name stdin ps7_uart_1
   configbsp -bsp $bsp_name stdout ps7_uart_1
+
+  updatemss -mss $workspace_dir/$bsp_name/system.mss
+  regenbsp -bsp $bsp_name
 }
 
 puts "--- Importing main application..."
@@ -61,7 +64,8 @@ foreach proj $projects {
 
 if {[catch {
   puts "--- Building all projects..."
-  projects -build
+  puts "(skipping this for now)"
+  #projects -build
 } errmsg ]} {
   puts "--- Failed building all projects!"
   puts "--- Error information:"
