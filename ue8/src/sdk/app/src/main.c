@@ -38,6 +38,8 @@ int main() {
   s16 z = 0;
 
   while (1) {
+    // Call main_c.c from here somehow..
+
     msleep(250);
     int temp = 4711;
 

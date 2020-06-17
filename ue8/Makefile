@@ -1,8 +1,8 @@
+all: cpp hw clang-format
+
 cpp: all.sim all.tb
 
-hw: all.hls all.vivado
-
-all: cpp hw clang-format
+hw: all.hls all.vivado all.sdk
 
 clang-format:
 	@echo "Auto formatting all C/CPP files under src/"
@@ -10,6 +10,7 @@ clang-format:
 	clang-format-6.0 -i $$(git ls-files 'src/*.[ch]pp')
 
 clean: clean.sim clean.tb clean.hls clean.vivado
+	rm -rf obj/
 	rm -rf generated/
 
 
