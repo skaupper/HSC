@@ -120,7 +120,10 @@ CordicStatus_t CordicCalcXY(float phi,
   CordicWrPhi(addrInt, fixedPhi);
 #else
   XCordic_cc_SetIphi(&xcordic_inst, fixedPhi);
+
+  // Toggle the iStart flag, to signal the IP to start the calculation
   XCordic_cc_SetIstart(&xcordic_inst, 1);
+  XCordic_cc_SetIstart(&xcordic_inst, 0);
 #endif
 
   // Wait until calculation is finished
