@@ -9,6 +9,7 @@
 set -euo pipefail
 
 ARG=${1:-"unset"}
+GUI=${2:-"unset"}
 
 SCRIPT_PATH=$(realpath $(dirname $BASH_SOURCE))
 cd $SCRIPT_PATH
@@ -36,7 +37,9 @@ elif [ "$ARG" == "synth_vivado" ]; then
   exit 0
 elif [ "$ARG" == "sdk" ]; then
   xsdk -batch -source $SCRIPT_PATH/create_sdk.tcl
-  xsdk -workspace ../sdk
+  if [ "$GUI" == "1" ]; then
+    xsdk -workspace ../sdk
+  fi
   exit 0
 elif [ "$ARG" == "project_hls" ]; then
   $VIVADO_HLS_BATCH $SCRIPT_PATH/create_hls_project.tcl

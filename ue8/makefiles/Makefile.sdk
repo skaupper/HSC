@@ -1,9 +1,10 @@
 SDK_SCRIPT_DIR=scripts
+GUI=1
 
 all.sdk: clean.sdk project.sdk
 
 project.sdk:
-	$(HLS_SCRIPT_DIR)/run.sh sdk
+	$(HLS_SCRIPT_DIR)/run.sh sdk $(GUI)
 
 clean.sdk:
 	rm -rf generated/sdk

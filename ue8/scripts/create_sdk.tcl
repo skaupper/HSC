@@ -64,8 +64,8 @@ foreach proj $projects {
 
 if {[catch {
   puts "--- Building all projects..."
-  puts "(skipping this for now)"
-  #projects -build
+  #puts "(skipping this for now)"
+  projects -build
 } errmsg ]} {
   puts "--- Failed building all projects!"
   puts "--- Error information:"
