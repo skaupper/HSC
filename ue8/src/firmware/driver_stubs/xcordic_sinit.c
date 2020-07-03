@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "xcordic.h"
+#include "xcordic_cc.h"
 #include "xparameters.h"
 
 static XCordic_Config XCordic_ConfigTable[XPAR_XCORDIC_NUM_INSTANCES];

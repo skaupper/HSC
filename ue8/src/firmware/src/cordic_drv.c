@@ -4,8 +4,8 @@
 #include <math.h>
 
 #include "hal.h"
-#include "xcordic.h"
-#include "xexception.h"
+#include "xcordic_cc.h"
+#include "xil_exception.h"
 #include "xparameters.h"
 #include "xscugic.h"
 

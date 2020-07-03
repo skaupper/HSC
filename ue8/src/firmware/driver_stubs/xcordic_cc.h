@@ -1,5 +1,5 @@
-#ifndef _XCORDIC_H_
-#define _XCORDIC_H_
+#ifndef _XCORDIC_CC_H_
+#define _XCORDIC_CC_H_
 
 #include "types.h"
 
@@ -26,4 +26,4 @@ int XCordic_CfgInitialize(XCordic *InstancePtr, XCordic_Config *ConfigPtr);
 void XCordic_InterruptEnable(XCordic *InstancePtr);
 void XCordic_InterruptClear(XCordic *InstancePtr, u16 DeviceId);
 
-#endif
+#endif /* _XCORDIC_CC_H_ */

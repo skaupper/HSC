@@ -1,7 +1,6 @@
-#include "xcordic.h"
-
 #include <stdlib.h>
 
+#include "xcordic_cc.h"
 #include "xparameters.h"
 
 void XCordic_InterruptEnable(XCordic *InstancePtr) {

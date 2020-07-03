@@ -52,7 +52,7 @@ puts "--- Importing other sources..."
 # The following command could probably be replaced with
 # 'createlib' in the future (library project).
 # This would also remove the need to gitignore imported source files.
-#importsources -name $app_name -path ../../src/firmware
+importsources -name $app_name -path ../../src/firmware/src
 
 puts "--- Loaded projects:"
 set projects [getprojects]

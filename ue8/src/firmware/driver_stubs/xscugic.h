@@ -2,7 +2,7 @@
 #define _XSCUGIC_H_
 
 #include "types.h"
-#include "xexception.h"
+#include "xil_exception.h"
 
 //
 // Typedefs

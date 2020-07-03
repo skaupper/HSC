@@ -1,4 +1,4 @@
-#include "xexception.h"
+#include "xil_exception.h"
 
 void Xil_ExceptionInit(void) {
   // Stub

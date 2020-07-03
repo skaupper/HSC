@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "xexception.h"
+#include "xil_exception.h"
 #include "xparameters.h"
 #include "xscugic.h"
 
