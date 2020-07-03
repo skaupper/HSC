@@ -1,7 +1,7 @@
 #include "cordic_tlm.hpp"
 #include "emu_cpu.hpp"
 
-extern "C" int main_c();  // from firmware/main_c.c
+extern "C" int main_c();  // from /src/main_c.c
 extern "C" void wait() {
   wait(1, SC_NS);
 }

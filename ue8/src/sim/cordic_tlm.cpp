@@ -10,7 +10,7 @@
 #include "cordic_tlm.hpp"
 
 #include "constants.hpp"
-#include "firmware/hal.h"
+#include "firmware/src/hal.h"
 
 Cordic_TLM::Cordic_TLM(sc_module_name name)
     : sc_module(name),
