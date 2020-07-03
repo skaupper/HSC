@@ -120,16 +120,22 @@ CordicStatus_t CordicCalcXY(float phi,
   CordicWrPhi(addrInt, fixedPhi);
 #else
   XCordic_cc_SetIphi(&xcordic_inst, fixedPhi);
+  XCordic_cc_SetIstart(&xcordic_inst, 1);
 #endif
 
   // Wait until calculation is finished
   // TODO: fix race condition...
-  while (!rdy_irq) {
 #ifdef EMUCPU
+  while (!rdy_irq) {
     Wait();
-#endif
   }
   rdy_irq = 0;
+#else
+  // Poll the Ready Flag, which is pulled low by the IP
+  // until the calculation is done
+  while (XCordic_cc_GetOrdy(&xcordic_inst) == 0) {
+  }
+#endif
 
   // Extract resulting angles
   uint16_t x;

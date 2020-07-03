@@ -15,11 +15,11 @@ static void timerExpired(void *state) {
   XScuTimer *timer = (XScuTimer *)state;
   XScuTimer_ClearInterruptStatus(timer);
 
-  xil_printf("Timer expired\n");
+  xil_printf("Timer expired\r\n");
 }
 
 int main() {
-  printf("### Main Program running now ... ###\n");
+  xil_printf("### Main Program running now ... ###\n");
 
   int status = 0;
 
@@ -31,28 +31,20 @@ int main() {
   PrivateTimer_SetIntHandler((Xil_ExceptionHandler)timerExpired);
 
   if (status != XST_SUCCESS) {
-    xil_printf("Initialization failed!!!\n");
+    xil_printf("Timer initialization failed!!!\n");
     while (1) {
     }
   }
-  printf("### Done with initializing peripherals.\n");
+  xil_printf("### Done with initializing peripherals.\n");
 
-  // Endless loop. Let the timer interrupt do the work.
-  s16 x = 0;
-  s16 y = 0;
-  s16 z = 0;
-
+  // Main Loop
   while (1) {
     // Call the main function, which is also used in simulation.
     main_c();
 
+    xil_printf("Sleeping for 1 second ...\r\n");
+    xil_printf("########################################################\r\n");
     msleep(1000);
-    int temp = 4711;
-
-    x++;
-    xil_printf("x: %d; y: %d; z: %d; temp: %d\n", x, y, z, temp);
-    xil_printf(
-        "##################################################################\n");
   }
 
   // Cleanup. Not reachable.
