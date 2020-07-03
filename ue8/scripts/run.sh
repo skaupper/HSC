@@ -56,7 +56,7 @@ elif [ "$ARG" == "export_hls" ]; then
   # Unpack the IP zip package
   IP_PACKAGE=$PROJ_DIR/**/**/impl/ip/*.zip
   IP_DESTINATION=$IP_DIR/cordic
-  rm -r $IP_DESTINATION/*
+  rm -rf $IP_DESTINATION/*
   unzip -o $IP_PACKAGE -d $IP_DESTINATION
   # Add a custom IP Logo for the Block Design
   #cp ./src/img/logo.png $IP_DESTINATION/misc/logo.png

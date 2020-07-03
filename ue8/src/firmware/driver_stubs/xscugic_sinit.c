@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 #include "xexception.h"
-#include "xparameter.h"
+#include "xparameters.h"
 #include "xscugic.h"
 
 static XScuGic_Config XScuGic_ConfigTable[XPAR_XSCUGIC_NUM_INSTANCES];

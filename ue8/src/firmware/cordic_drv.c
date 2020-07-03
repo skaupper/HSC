@@ -6,7 +6,7 @@
 #include "hal.h"
 #include "xcordic.h"
 #include "xexception.h"
-#include "xparameter.h"
+#include "xparameters.h"
 #include "xscugic.h"
 
 #define PHI_FRACTIONAL_BITS 21
@@ -148,16 +148,32 @@ void CordicISRHandler(void *_) {
 CordicStatus_t cordic_init() {
   int status;
 
+#ifdef EMUCPU
   int success = XCordic_Initialize(&xcordic_inst, CORDIC_DEVICE_ID);
+#else
+  int success =
+      XCordic_cc_Initialize(&xcordic_inst, XPAR_CORDIC_CC_TOP_0_DEVICE_ID);
+#endif
   if (success != XST_SUCCESS)
     return FAIL;
 
-  //
-  // Setup interrupt handling here
-  //
+    //
+    // Setup interrupt handling here
+    //
 
-  // Query the interrupt controller configuration entry
+    // Query the interrupt controller configuration entry
+#ifdef EMUCPU
   status = XScuGic_Initialize(&xscugic_inst, INTC_DEVICE_ID);
+#else
+  XScuGic_Config *ConfigPtr;
+
+  ConfigPtr = XScuGic_LookupConfig(XPAR_PS7_SCUGIC_0_DEVICE_ID);
+  if (ConfigPtr == NULL) {
+    xscugic_inst.IsReady = 0;
+    return (XST_DEVICE_NOT_FOUND);
+  }
+  status = XScuGic_CfgInitialize(&xscugic_inst, ConfigPtr, 0);
+#endif
   if (status != XST_SUCCESS) {
     return XST_FAILURE;
   }

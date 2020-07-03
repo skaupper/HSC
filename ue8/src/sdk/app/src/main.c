@@ -5,6 +5,8 @@
 #include "platform.h"
 #include "private_timer.h"
 
+extern int main_c();
+
 #define msleep(msec) usleep((msec)*1000)
 
 static XScuGic intc;
@@ -38,13 +40,16 @@ int main() {
   s16 z = 0;
 
   while (1) {
-    // Call main_c.c from here somehow..
+    // Call the main function, which is also used in simulation.
+    main_c();
 
-    msleep(250);
+    msleep(1000);
     int temp = 4711;
 
     x++;
     xil_printf("x: %d; y: %d; z: %d; temp: %d\n", x, y, z, temp);
+    xil_printf(
+        "##################################################################\n");
   }
 
   // Cleanup. Not reachable.

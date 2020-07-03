@@ -1,7 +1,7 @@
 #include "hal.h"
 
 //
-// Write and Read fuction to communicatie with the EmuCPU
+// Write and Read functions to communicate with the EmuCPU
 // (from src/sim/emu_cpu.cpp)
 //
 extern void write_bus(uint32_t addr, uint32_t data);

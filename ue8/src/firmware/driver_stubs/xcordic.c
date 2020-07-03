@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "xparameter.h"
+#include "xparameters.h"
 
 void XCordic_InterruptEnable(XCordic *InstancePtr) {
   InstancePtr->IsReady = 1;

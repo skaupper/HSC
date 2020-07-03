@@ -1,5 +1,5 @@
-#ifndef _XPARAMETER_H_
-#define _XPARAMETER_H_
+#ifndef _XPARAMETERS_H_
+#define _XPARAMETERS_H_
 
 #define INTC_DEVICE_ID 0
 #define CORDIC_DEVICE_ID 0
@@ -15,4 +15,4 @@
 #define XST_FAILURE -1
 #define XST_DEVICE_NOT_FOUND -2
 
-#endif /* _XPARAMETER_H_ */
+#endif /* _XPARAMETERS_H_ */

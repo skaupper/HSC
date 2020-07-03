@@ -52,7 +52,7 @@ puts "--- Importing other sources..."
 # The following command could probably be replaced with
 # 'createlib' in the future (library project).
 # This would also remove the need to gitignore imported source files.
-#importsources -name $app_name -path src
+#importsources -name $app_name -path ../../src/firmware
 
 puts "--- Loaded projects:"
 set projects [getprojects]
@@ -64,8 +64,8 @@ foreach proj $projects {
 
 if {[catch {
   puts "--- Building all projects..."
-  #puts "(skipping this for now)"
-  projects -build
+  puts "(skipping this for now)"
+  #projects -build
 } errmsg ]} {
   puts "--- Failed building all projects!"
   puts "--- Error information:"

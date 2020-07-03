@@ -1,7 +1,7 @@
 #include "xscugic.h"
 
 #include "firmware/hal.h"
-#include "xparameter.h"
+#include "xparameters.h"
 
 void XScuGic_InterruptHandler(XScuGic *inst) {
   // Stub
