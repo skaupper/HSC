@@ -13,7 +13,7 @@
 #define XY_FRACTIONAL_BITS 16
 
 static XScuGic xscugic_inst;
-static XCordic xcordic_inst;
+static XCordic_cc xcordic_inst;
 
 static u8 rdy_irq = 0;
 
@@ -148,12 +148,8 @@ void CordicISRHandler(void *_) {
 CordicStatus_t cordic_init() {
   int status;
 
-#ifdef EMUCPU
-  int success = XCordic_Initialize(&xcordic_inst, CORDIC_DEVICE_ID);
-#else
   int success =
       XCordic_cc_Initialize(&xcordic_inst, XPAR_CORDIC_CC_TOP_0_DEVICE_ID);
-#endif
   if (success != XST_SUCCESS)
     return FAIL;
 
@@ -163,7 +159,7 @@ CordicStatus_t cordic_init() {
 
     // Query the interrupt controller configuration entry
 #ifdef EMUCPU
-  status = XScuGic_Initialize(&xscugic_inst, INTC_DEVICE_ID);
+  status = XScuGic_Initialize(&xscugic_inst, XPAR_PS7_SCUGIC_0_DEVICE_ID);
 #else
   XScuGic_Config *ConfigPtr;
 
@@ -190,7 +186,7 @@ CordicStatus_t cordic_init() {
   // Register an interrupt handler for the timer interrupt at the
   // interrupt controller.
   status = XScuGic_Connect(&xscugic_inst,
-                           CORDIC_INTR_ID,
+                           XPAR_PS7_SCUGIC_0_DEVICE_ID,
                            (Xil_ExceptionHandler)CordicISRHandler,
                            (void *)&xcordic_inst);
   if (status != XST_SUCCESS) {
@@ -198,10 +194,10 @@ CordicStatus_t cordic_init() {
   }
 
   // Enable the generic interrupt controller
-  XScuGic_Enable(&xscugic_inst, CORDIC_INTR_ID);
+  XScuGic_Enable(&xscugic_inst, XPAR_CORDIC_CC_TOP_0_DEVICE_ID);
 
   // Enable the interrupts of the timer
-  XCordic_InterruptEnable(&xcordic_inst);
+  XCordic_cc_InterruptEnable(&xcordic_inst);
 
   // Enable interrupts for the processor
   Xil_ExceptionEnable();
