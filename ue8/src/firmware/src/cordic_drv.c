@@ -3,7 +3,9 @@
 #include <assert.h>
 #include <math.h>
 
+#ifdef EMUCPU
 #include "hal.h"
+#endif
 #include "xcordic_cc.h"
 #include "xil_exception.h"
 #include "xscugic.h"

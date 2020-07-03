@@ -1,3 +1,5 @@
+#ifdef EMUCPU
+
 #include "hal.h"
 
 //
@@ -32,3 +34,5 @@ void CordicSetISRCallback(void (*isr_func)(void *)) {
 void Wait() {
   wait();
 }
+
+#endif /* #ifdef EMUCPU */
