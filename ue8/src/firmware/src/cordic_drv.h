@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "xparameters.h"
+
 typedef enum { FAIL = -1, OK = 0 } CordicStatus_t;
 
 CordicStatus_t cordic_init();

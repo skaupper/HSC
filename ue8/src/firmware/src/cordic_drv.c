@@ -6,7 +6,6 @@
 #include "hal.h"
 #include "xcordic_cc.h"
 #include "xil_exception.h"
-#include "xparameters.h"
 #include "xscugic.h"
 
 #define PHI_FRACTIONAL_BITS 21
@@ -105,9 +104,6 @@ CordicStatus_t CordicCalcXY(float phi,
     return FAIL;
   }
 
-  // This double cast avoids pointer-to-int warnings
-  uint32_t addrInt = (uint32_t)(uintptr_t)addr;
-
   // Move input angle to the first quadrant
   int origQuadrant = 0;
   phi = norm_angle(phi);
@@ -115,7 +111,14 @@ CordicStatus_t CordicCalcXY(float phi,
 
   // Write the input angle
   uint32_t fixedPhi = phi * pow(2, PHI_FRACTIONAL_BITS);
+#ifdef EMUCPU
+  // This double cast avoids pointer-to-int warnings
+  uint32_t addrInt = (uint32_t)(uintptr_t)addr;
+
   CordicWrPhi(addrInt, fixedPhi);
+#else
+  XCordic_cc_SetIphi(&xcordic_inst, fixedPhi);
+#endif
 
   // Wait until calculation is finished
   // TODO: fix race condition...
@@ -127,9 +130,17 @@ CordicStatus_t CordicCalcXY(float phi,
   rdy_irq = 0;
 
   // Extract resulting angles
+  uint16_t x;
+  uint16_t y;
+
+#ifdef EMUCPU
   uint32_t result = CordicRdXY(addrInt);
-  uint16_t x = ((result >> 0) & 0xffff);
-  uint16_t y = ((result >> 16) & 0xffff);
+  x = ((result >> 0) & 0xffff);
+  y = ((result >> 16) & 0xffff);
+#else
+  x = XCordic_cc_GetOx(&xcordic_inst);
+  y = XCordic_cc_GetOy(&xcordic_inst);
+#endif
 
   // Convert angles back to floating point
   *cos = ((float)x) / pow(2, XY_FRACTIONAL_BITS);
@@ -197,7 +208,7 @@ CordicStatus_t cordic_init() {
   XScuGic_Enable(&xscugic_inst, XPAR_CORDIC_CC_TOP_0_DEVICE_ID);
 
   // Enable the interrupts of the timer
-  XCordic_cc_InterruptEnable(&xcordic_inst);
+  // XCordic_cc_InterruptEnable(&xcordic_inst);
 
   // Enable interrupts for the processor
   Xil_ExceptionEnable();
