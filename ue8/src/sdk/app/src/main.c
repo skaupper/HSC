@@ -19,6 +19,8 @@ static void timerExpired(void *state) {
 }
 
 int main() {
+  printf("### Main Program running now ... ###\n");
+
   int status = 0;
 
   // Do initialization
@@ -33,6 +35,7 @@ int main() {
     while (1) {
     }
   }
+  printf("### Done with initializing peripherals.\n");
 
   // Endless loop. Let the timer interrupt do the work.
   s16 x = 0;
