@@ -2,16 +2,7 @@
 # File        : .gitignore
 # Author      : Michael Wurm <michael.wurm@students.fh-hagenberg.at>
 #               Sebastian Kaupper <sebastian.kaupper@students.fh-hagenberg.at>
-# Description : Global gitignore file
+# Description : Local gitignore file for SDK main application
 ################################################################################
 
-# Ignore object and binary directories
-obj/
-bin/
-lib/
-
-*.log
-
-.vscode/
-
-generated/
+Debug/

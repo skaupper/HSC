@@ -1,0 +1,20 @@
+HLS_SCRIPT_DIR=scripts
+
+all.hls: project.hls sim.hls synth.hls export.hls
+
+project.hls:
+	$(HLS_SCRIPT_DIR)/run.sh project_hls
+
+sim.hls:
+	$(HLS_SCRIPT_DIR)/run.sh sim_hls
+
+synth.hls:
+	$(HLS_SCRIPT_DIR)/run.sh synth_hls
+
+export.hls:
+	$(HLS_SCRIPT_DIR)/run.sh export_hls
+
+clean.hls:
+	rm -rf generated/cordic_cc
+
+.PHONY: all.hls sim.hls project.hls synth.hls export.hls clean.hls

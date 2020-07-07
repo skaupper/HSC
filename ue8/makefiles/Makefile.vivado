@@ -1,0 +1,15 @@
+VIVADO_SCRIPT_DIR=scripts
+
+all.vivado: project.vivado synth.vivado
+
+project.vivado:
+	$(VIVADO_SCRIPT_DIR)/run.sh project_vivado
+
+synth.vivado:
+	$(VIVADO_SCRIPT_DIR)/run.sh synth_vivado
+
+clean.vivado:
+	rm -rf generated/basic_cordic_system
+
+
+.PHONY: all.vivado project.vivado synth.vivado clean.vivado

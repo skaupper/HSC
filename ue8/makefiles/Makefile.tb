@@ -1,0 +1,65 @@
+TB_BIN_NAME=tb
+
+# Compile and link flags
+TB_DEFINES=
+TB_CPPDEFINES=$(TB_DEFINES) SC_INCLUDE_FX WRITE_TRACE
+TB_CPPFLAGS=-Wall -Werror -Wno-unknown-pragmas -pedantic \
+			--std=c++11 -O0 -g \
+			$(addprefix -D,$(TB_CPPDEFINES))\
+			$(addprefix -I,$(TB_INC_DIRS))
+TB_LDFLAGS=-lpthread -lsystemc
+
+# Directory constants
+TB_BIN_DIR=bin
+TB_SRC_DIRS=src/cordic src/tb
+TB_OBJ_DIR=obj/tb
+TB_INC_DIRS=src
+
+# Source and object files
+TB_BINARY=$(TB_BIN_DIR)/$(TB_BIN_NAME)
+
+TB_CPP_SOURCES=$(foreach CUR_SRC_DIR,$(TB_SRC_DIRS),$(wildcard $(CUR_SRC_DIR)/*.cpp))
+TB_SOURCES=$(TB_CPP_SOURCES)
+
+TB_CPP_OBJECTS=$(TB_CPP_SOURCES:%.cpp=%.o)
+TB_OBJECTS_NO_PREFIX=$(TB_CPP_OBJECTS)
+TB_OBJECTS=$(addprefix $(TB_OBJ_DIR)/,$(TB_OBJECTS_NO_PREFIX))
+
+TB_CPP_DEPS=$(addprefix $(TB_OBJ_DIR)/,$(TB_CPP_OBJECTS:%.o=%.d))
+
+
+# General targets
+all.tb: $(TB_BIN_DIR) $(TB_OBJ_DIR) $(TB_BINARY)
+
+print.tb:
+	@echo "Sources:"
+	@echo $(TB_SOURCES)
+	@echo
+	@echo "Objects:"
+	@echo $(TB_OBJECTS)
+	@echo
+	@echo "C++ Deps:"
+	@echo $(TB_CPP_DEPS)
+
+clean.tb:
+	rm -rf $(TB_OBJ_DIR)
+	rm -rf $(TB_BIN_DIR)
+
+$(TB_OBJ_DIR)::
+	mkdir -p $(TB_OBJ_DIR)
+
+$(TB_BIN_DIR)::
+	mkdir -p $(TB_BIN_DIR)
+
+
+# Compile and link targets
+$(TB_BINARY): $(TB_OBJECTS)
+	$(CXX) $^ $(TB_LDFLAGS) -o $@
+
+-include $(TB_CPP_DEPS)
+$(TB_OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(shell dirname $@)
+	$(CXX) -c $< $(TB_CPPFLAGS) -MMD -o $@
+
+
+.PHONY: all.tb print.tb clean.tb
