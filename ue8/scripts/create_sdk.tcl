@@ -45,14 +45,12 @@ if {![file exists "$bsp_name"]} {
   regenbsp -bsp $bsp_name
 }
 
-puts "--- Importing main application..."
-importprojects ../../src/sdk/$app_name
-
-puts "--- Importing other sources..."
-# The following command could probably be replaced with
-# 'createlib' in the future (library project).
-# This would also remove the need to gitignore imported source files.
-importsources -name $app_name -path ../../src/firmware/src
+puts "--- Creating App..."
+if {![file exists "$app_name"]} {
+  createapp -name $app_name -app {Empty Application} -bsp $bsp_name -hwproject $hw_name -proc ps7_cortexa9_0 -os standalone
+  importsources -name $app_name -path ../../src/firmware/src
+  importsources -name $app_name -path ../../src/sdk/
+}
 
 puts "--- Loaded projects:"
 set projects [getprojects]
@@ -64,8 +62,7 @@ foreach proj $projects {
 
 if {[catch {
   puts "--- Building all projects..."
-  puts "(skipping this for now)"
-  #projects -build
+  projects -build
 } errmsg ]} {
   puts "--- Failed building all projects!"
   puts "--- Error information:"

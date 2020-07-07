@@ -172,26 +172,18 @@ CordicStatus_t cordic_init() {
 
   int success =
       XCordic_cc_Initialize(&xcordic_inst, XPAR_CORDIC_CC_TOP_0_DEVICE_ID);
-  if (success != XST_SUCCESS)
+  if (success != XST_SUCCESS) {
     return FAIL;
-
-    //
-    // Setup interrupt handling here
-    //
-
-    // Query the interrupt controller configuration entry
-#ifdef EMUCPU
-  status = XScuGic_Initialize(&xscugic_inst, XPAR_PS7_SCUGIC_0_DEVICE_ID);
-#else
-  XScuGic_Config *ConfigPtr;
-
-  ConfigPtr = XScuGic_LookupConfig(XPAR_PS7_SCUGIC_0_DEVICE_ID);
-  if (ConfigPtr == NULL) {
-    xscugic_inst.IsReady = 0;
-    return (XST_DEVICE_NOT_FOUND);
   }
-  status = XScuGic_CfgInitialize(&xscugic_inst, ConfigPtr, 0);
-#endif
+
+
+  //
+  // Setup interrupt handling here
+  //
+
+#ifdef EMUCPU
+  // Query the interrupt controller configuration entry
+  status = XScuGic_Initialize(&xscugic_inst, XPAR_PS7_SCUGIC_0_DEVICE_ID);
   if (status != XST_SUCCESS) {
     return XST_FAILURE;
   }
@@ -219,10 +211,11 @@ CordicStatus_t cordic_init() {
   XScuGic_Enable(&xscugic_inst, XPAR_CORDIC_CC_TOP_0_DEVICE_ID);
 
   // Enable the interrupts of the timer
-  // XCordic_cc_InterruptEnable(&xcordic_inst);
+  XCordic_cc_InterruptEnable(&xcordic_inst);
 
   // Enable interrupts for the processor
   Xil_ExceptionEnable();
+#endif
 
   return OK;
 }

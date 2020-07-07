@@ -17,18 +17,18 @@ int main_c() {
   float cos;
   float sin;
 
-  printf("### Running the main_c() function now....\n");
+  printf("### Running the main_c() function now....\r\n");
 
   int success = cordic_init();
   if (success == FAIL) {
-    printf("Initialization of Cordic core in cordic_init() failed!");
+    printf("Initialization of Cordic core in cordic_init() failed!\r\n");
     return -1;
   }
-  printf("### Successfully initialized Cordic IP.\n");
+  printf("### Successfully initialized Cordic IP.\r\n");
 
   for (float angle = START_ANGLE; angle < END_ANGLE; angle += ANGLE_INCR) {
     CordicCalcXY(angle, &cos, &sin, (uint32_t*)CORDIC_CC_BASEADDR);
-    printf("Phi: %2.3f; Cos: %1.4f; Sin: %1.4f\n", angle, cos, sin);
+    printf("Phi: %2.3f; Cos: %1.4f; Sin: %1.4f\r\n", angle, cos, sin);
   }
 
   return 0;

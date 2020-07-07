@@ -19,7 +19,7 @@ static void timerExpired(void *state) {
 }
 
 int main() {
-  xil_printf("### Main Program running now ... ###\n");
+  xil_printf("### Main Program running now ... ###\r\n");
 
   int status = 0;
 
@@ -31,11 +31,11 @@ int main() {
   PrivateTimer_SetIntHandler((Xil_ExceptionHandler)timerExpired);
 
   if (status != XST_SUCCESS) {
-    xil_printf("Timer initialization failed!!!\n");
+    xil_printf("Timer initialization failed!!!\r\n");
     while (1) {
     }
   }
-  xil_printf("### Done with initializing peripherals.\n");
+  xil_printf("### Done with initializing peripherals.\r\n");
 
   // Main Loop
   while (1) {
