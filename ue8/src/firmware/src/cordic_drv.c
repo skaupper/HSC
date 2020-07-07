@@ -176,7 +176,6 @@ CordicStatus_t cordic_init() {
     return FAIL;
   }
 
-
   //
   // Setup interrupt handling here
   //
