@@ -1,5 +1,5 @@
 set SRC_DIR  "../../src"
-set CPPFLAGS "--std=c++11 -I$SRC_DIR"
+set CPPFLAGS "-I$SRC_DIR"
 
 open_project -reset prj
 add_files       $SRC_DIR/cordic/cordic_cc.cpp     -cflags $CPPFLAGS

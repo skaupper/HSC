@@ -15,6 +15,7 @@
 #endif
 
 #include <systemc.h>
+#include <stdint.h>
 
 // 18 iterations to use the maximum resolution of the interface (max. error =
 // 2^-16) static const int ITERATIONS = 18;
